@@ -1,17 +1,21 @@
 <script setup>
 import { ref } from 'vue';
 
-const props = defineProps(['couleur', 'mot'])
-
+const props = defineProps(['couleur','mot'])
 const motCard = props.mot.toUpperCase();
-console.log(props.couleur)
+
+function clicked(e){
+    const clickedCard = e.target
+    clickedCard.style.transform = 'scale(0.9)'
+  
+}
 </script>
 
 <template>
-    <div class="card">
-        <div class="card-mot-container">
-            <div class="card-mot">
-                <p>{{motCard}}</p>
+    <div class="card" v-on:click="clicked($event)">
+        <div class="card-mot-container" v-on:click.stop>
+            <div class="card-mot" v-on:click.stop>
+                <p v-on:click.stop>{{motCard}}</p>
             </div>
         </div>
     </div>
@@ -26,6 +30,8 @@ console.log(props.couleur)
     align-items: end;
     padding-bottom: 15px;
     border-radius: 5px;
+    cursor: pointer;
+    transition: 0.2s;
     
     background-color: v-bind($props.couleur);
 }
