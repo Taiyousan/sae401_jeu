@@ -1,5 +1,6 @@
 <script setup>
 import CardGame from '../components/CardGame.vue';
+import CardGrille from '../components/CardGrille.vue';
 import wordslist from '../assets/data/wordslist.json';
 import couleurslist from '../assets/data/couleurs.json';
 import couleurslistj2 from '../assets/data/couleursj2.json';
@@ -48,31 +49,30 @@ function exportToJsonFile(jsonData) {
 
 <template>
     <div class="app">
-        <h1>PLATEAU 1</h1>
-        <p class="indication">Cette partie est générée aléatoirement. Les plateaux sont différents à chaque refresh, mais on peut en sauvegarder la configuration avec le bouton en bas, qui génère un .json. On peut réutiliser ce .json pour générer le même plateau plus tard.
-        </p>
-        <p class="indication">Pour générer un nouveau plateau, il faut cliquer sur un autre bouton du menu en haut puis revenir sur "jeu".</p>
-        <div class="plateau">
-            <template v-for="word in newRandom">
-               <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 />
-               <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
-            </template>
+        
+           
+        <div class="joueur-container">
+            <div class="plateau">
+                <template v-for="word in newRandom">
+                   <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 />
+                   <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
+                </template>
+            </div>
+            <div class="grille" >
+                <span v-for="word in newRandom">
+                    <CardGrille :couleur=word.couleurJ1 />
+                </span>
+            </div>
         </div>
-        <h1>PLATEAU J2</h1>
-        <div class="plateau plateauJ2">
-            <template v-for="word in newRandom">
-               <CardGame :mot=word.mot :couleur=word.couleurJ2 :opponentCouleur=word.couleurJ1 :position=word.position :joueur=2 />
-                <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 2 -->
-            </template>
-        </div>
+        
+        
     </div>
 
-    <button v-on:click=exportToJsonFile(newRandom)>télacharger plan</button>
 </template>
 
 <style scoped>
 .plateau {
-    border: 8px solid black;
+    /* border: 8px solid black; */
     width: 60vw;
     display : grid;
     grid-template-columns: repeat(5, 15%);
@@ -87,5 +87,19 @@ function exportToJsonFile(jsonData) {
 .indication {
     font-weight: bold;
     color: red;
+}
+
+.grille {
+    width: fit-content;
+    height: 300px;
+    display : grid;
+    grid-template-columns: repeat(5, 25%);
+    grid-template-rows: repeat(5, 20%);
+}
+
+.joueur-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 </style>

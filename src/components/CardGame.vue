@@ -1,18 +1,27 @@
 <script setup>
 import { ref } from 'vue';
 
-const props = defineProps(['couleur','mot'])
+const props = defineProps(['couleur','mot', 'position', 'joueur', 'opponentCouleur'])
 const motCard = props.mot.toUpperCase();
 
 function clicked(e){
+    console.log(props.opponentCouleur)
     const clickedCard = e.target
-    clickedCard.style.transform = 'scale(0.9)'
-  
+    if(props.opponentCouleur == "black"){
+        clickedCard.style.backgroundColor = "black";
+    }
+    if (props.opponentCouleur == "green") {
+        clickedCard.style.backgroundColor = "green";
+     
+    } if(props.opponentCouleur == "#f9e4b7") {
+     clickedCard.style.backgroundColor = "#f2c667";   
+    }
 }
+
 </script>
 
 <template>
-    <div class="card" v-on:click="clicked($event)">
+    <div class="card" v-on:click="clicked($event)" >
         <div class="card-mot-container" v-on:click.stop>
             <div class="card-mot" v-on:click.stop>
                 <p v-on:click.stop>{{motCard}}</p>
@@ -32,8 +41,9 @@ function clicked(e){
     border-radius: 5px;
     cursor: pointer;
     transition: 0.2s;
-    
-    background-color: v-bind($props.couleur);
+    background-size: cover;
+    background-color: #f9e4b7;
+    /* background-color: v-bind($props.couleur); */
 }
 
 .card-mot-container {

@@ -9,7 +9,9 @@ import partiesaved from '../assets/data/partiesaved.json';
 <template>
     <div class="app">
         <h1>PLATEAU J1</h1>
-        <p class="indication">Cette partie est "sauvegardée", c'est donc toujours la même, même si on refresh. Les données sont tirées d'un fichier .json.</p>
+        <p class="indication1">Cette partie est "sauvegardée", c'est donc toujours la même, même si on refresh. Les données sont tirées d'un fichier .json.
+            
+        </p>
         <div class="plateau">
             <template v-for="word in partiesaved">
                <CardGame  :mot=word.mot :couleur=word.couleurJ1 />
@@ -42,7 +44,7 @@ import partiesaved from '../assets/data/partiesaved.json';
     border: 8px solid red;
 }
 
-.indication {
+.indication1 {
     font-weight: bold;
     color: red;
 }
