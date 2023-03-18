@@ -1,15 +1,27 @@
-<script setup>
-const props = defineProps(['couleur','mot', 'position', 'joueur', 'opponentCouleur'])
+<script>
+
+export default {
+    props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur'],
+    name : 'CardGame',
+    mounted() {
+        setTimeout(() => {
+            this.$el.style.transform = 'translateX(0px)'
+        }, this.position*100)
+    },
+  }
+
 </script>
 
 <template>
-    <div></div>
+    <div class="case"></div>
 </template>
 
 <style scoped>
-div {
-    background-color: v-bind($props.couleur);
+.case {
     width: 50px;
     height: 50px;
+    transition: 0.2s;
+    transform: translateX(500px);
+    background-color: v-bind($props.couleur);
 }
 </style>

@@ -62,6 +62,7 @@ const joueurConnecte = 'Michel';
 
 
 
+
 </script>
 
 <template>
@@ -92,7 +93,7 @@ const joueurConnecte = 'Michel';
             <div class="joueur-content-right">
                 <div class="grille" >
                     <span v-for="word in newRandom">
-                        <CardGrille :couleur=word.couleurJ1 />
+                        <CardGrille :couleur=word.couleurJ1 :position=word.position />
                     </span>
                 </div>
             </div>
@@ -104,26 +105,27 @@ const joueurConnecte = 'Michel';
 </template>
 
 <style scoped>
+
+.app {
+    /* bordure */
+    /* border: 1px solid red; */
+    height: 100%;
+}
 .plateau {
-    border: 8px solid black;
+    /* border: 8px solid black; */
     height: 80%;
     width: 100%;
-    display : grid;
+    display : inline-grid;
+    justify-items: center;
+    align-items: center;
     grid-template-columns: repeat(5, 20%);
-    grid-template-rows: repeat(5, 80px);
-    gap: 10px;
+    /* grid-template-rows: repeat(5, 80px); */
+    /* gap: 10px; */
     margin: 10px;
     /* background-color: aquamarine; */
 }
 
-.plateauJ2 {
-    border: 8px solid red;
-}
 
-.indication {
-    font-weight: bold;
-    color: red;
-}
 
 .grille {
     width: fit-content;
@@ -139,7 +141,7 @@ const joueurConnecte = 'Michel';
     flex-direction: row;
     align-items: center;
     /* background-color: rgb(211, 237, 237); */
-    border: 1px solid black;
+    /* border: 1px solid black; */
     height: 90vh;
 }
 
@@ -154,7 +156,7 @@ const joueurConnecte = 'Michel';
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid black;
+    /* border: 1px solid black; */
 
 }
 
