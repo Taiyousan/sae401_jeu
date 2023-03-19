@@ -78,6 +78,7 @@ const joueurConnecte = 'Michel';
             </div>
         </div>
            
+        <div class="indice-output"></div>
         <div class="joueur-container">
             <div class="joueur-content-left">
 
@@ -98,13 +99,77 @@ const joueurConnecte = 'Michel';
                 </div>
             </div>
         </div>
-        
-        
+
+        <div class="indice-sender-container">
+            <div class="indice-sender">
+                <input type="text" name="indice-sender">
+                <button name="indice-sender">Valider l'indice</button>
+            </div>
+        </div>
     </div>
 
 </template>
 
 <style scoped>
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.indice-sender-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    width: 100%;
+    /* background-color: aliceblue; */
+}
+
+.indice-sender-container .indice-sender {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 100%;
+    width: 40%;
+    /* background-color: rgb(71, 114, 153); */
+}
+
+.indice-sender input {
+    height: 50%;
+    width: 50%;
+    border-radius: 5px;
+    border: none;
+    background-color: white;
+    text-align: center;
+    font-size: 30px;
+    text-transform: uppercase;
+}
+
+.indice-sender button {
+    height: 50%;
+    width: 20%;
+    border-radius: 5px;
+    border: none;
+    background-color: white;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-transform: uppercase;
+}
+
+.indice-output {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 10vh;
+    width: 100%;
+    background-color: aliceblue;
+}
 
 .app {
     /* bordure */
@@ -142,7 +207,7 @@ const joueurConnecte = 'Michel';
     align-items: center;
     /* background-color: rgb(211, 237, 237); */
     /* border: 1px solid black; */
-    height: 90vh;
+    height: 80vh;
 }
 
 .joueur-content-left {

@@ -1,6 +1,6 @@
 <script setup>
 import Jeu from './views/Jeu.vue';
-import Router from './router/index.js';
+// import Router from './router/index.js';
 
 
 

@@ -60,7 +60,7 @@ export default {
     background-size: cover;
     background-color: #f9e4b7;
     /* background-color: v-bind($props.couleur); */
-    /* border: 1px solid black; */
+    /* border: 1px solid red; */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     transform: translateY(-1000px);
     

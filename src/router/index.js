@@ -11,7 +11,7 @@ const router = createRouter({
   routes: [
     {
       path : '/',
-      component: Home
+      component: PdvJoueur
     },
     {
       path: '/jeu',
@@ -27,7 +27,7 @@ const router = createRouter({
     },
     {
       path: '/pdvjoueur',
-      component: PdvJoueur
+      component: Home
     }
   ]
 })
