@@ -5,7 +5,7 @@ import BoutonMenu from '../components/BoutonMenu.vue';
 import wordslist from '../assets/data/wordslist.json';
 import couleurslist from '../assets/data/couleurs.json';
 import couleurslistj2 from '../assets/data/couleursj2.json';
-import { VueElement } from 'vue';
+import { onMounted, VueElement } from 'vue';
 
 let random = wordslist.sort(() => .5 - Math.random()).slice(0,25)
 // Je récupère la liste de mots et j'en tire 25 que je mets dans un array 'random'
@@ -54,11 +54,38 @@ const boutonReset = [
     'lien'
 ]
 
+
 const joueurConnecte = 'Michel';
 
 
+onMounted(() => { 
+    const input = document.querySelector(".indice-input");
+    const output = document.querySelector(".indice-output-zone");
+    const button = document.querySelector(".indice-button");
+    const outputChiffre = document.querySelector(".indice-output-chiffre");
+    const inputChiffre = document.querySelector(".indice-input-chiffre");
+    // envoi du mot si je clique sur le bouton
+    button.addEventListener("click", (event) => {
+    output.innerHTML = ' ' + input.value;
+    outputChiffre.innerHTML = inputChiffre.value;
+    input.value = '';
+    inputChiffre.value = '';
+    });
+    // envoi du mot si je clique sur la touche entrée
+    input.addEventListener("keyup", (event) => {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+        button.click();
+    }});
+});
 
-//Je créé une fonction qui sera appelée par le bouton pour exporter le plan de jeu au format json
+
+function chiffreIndice(n) {
+    console.log(n);
+    const output = document.querySelector(".indice-input-chiffre");
+    output.value = n;
+}
+
 
 
 
@@ -78,7 +105,11 @@ const joueurConnecte = 'Michel';
             </div>
         </div>
            
-        <div class="indice-output"></div>
+        <div class="indice-output">
+            <span class="indice-indice">Indice :  </span>
+            <span class="indice-output-zone"></span>
+            <span class="indice-output-chiffre"></span>
+        </div>
         <div class="joueur-container">
             <div class="joueur-content-left">
 
@@ -101,9 +132,13 @@ const joueurConnecte = 'Michel';
         </div>
 
         <div class="indice-sender-container">
+            <div class="chiffres">
+                <button v-for="n in 10" class="chiffre" v-on:click="chiffreIndice(n)">{{n}}</button>
+            </div>
             <div class="indice-sender">
-                <input type="text" name="indice-sender">
-                <button name="indice-sender">Valider l'indice</button>
+                <input type="text" name="indice-sender" class="indice-input">
+                <input type="text" class="indice-input-chiffre">
+                <button name="indice-sender" class="indice-button">Valider l'indice</button>
             </div>
         </div>
     </div>
@@ -112,6 +147,8 @@ const joueurConnecte = 'Michel';
 
 <style scoped>
 
+
+
 a {
     text-decoration: none;
     color: black;
@@ -119,10 +156,10 @@ a {
 
 .indice-sender-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 10vh;
+    height: 15vh;
     width: 100%;
     /* background-color: aliceblue; */
 }
@@ -137,9 +174,20 @@ a {
     /* background-color: rgb(71, 114, 153); */
 }
 
-.indice-sender input {
+.indice-sender .indice-input {
     height: 50%;
     width: 50%;
+    border-radius: 5px;
+    border: none;
+    background-color: white;
+    text-align: center;
+    font-size: 30px;
+    text-transform: uppercase;
+}
+
+.indice-input-chiffre {
+    height: 50px;
+    width: 50px;
     border-radius: 5px;
     border: none;
     background-color: white;
@@ -168,7 +216,59 @@ a {
     align-items: center;
     height: 10vh;
     width: 100%;
-    background-color: aliceblue;
+    /* background-color: white; */
+    /* border: 1px solid red; */
+    font-size: 40px;
+    color: black;
+    text-transform: uppercase;
+}
+
+.chiffres {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    height: 10vh;
+    width: 50%;
+    /* background-color: white; */
+    /* border: 1px solid red; */
+    font-size: 40px;
+    color: black;
+    text-transform: uppercase;
+}
+    .chiffres button {
+  align-items: center;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: .25rem;
+  box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+  box-sizing: border-box;
+  color: rgba(0, 0, 0, 0.85);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  justify-content: center;
+  line-height: 1.25;
+  margin: 0;
+  min-height: 3rem;
+  padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+  position: relative;
+  text-decoration: none;
+  transition: all 250ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: baseline;
+  width: auto;
+  text-transform: uppercase;
+}
+
+.indice-output-zone {
+    margin-left: 30px;
+    min-width: 500px;
+    font-size: 30px;
 }
 
 .app {
@@ -207,7 +307,7 @@ a {
     align-items: center;
     /* background-color: rgb(211, 237, 237); */
     /* border: 1px solid black; */
-    height: 80vh;
+    height: 65vh;
 }
 
 .joueur-content-left {
