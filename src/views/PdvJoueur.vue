@@ -7,6 +7,7 @@ import couleurslist from '../assets/data/couleurs.json';
 import couleurslistj2 from '../assets/data/couleursj2.json';
 import { onMounted, VueElement } from 'vue';
 
+// let random = {"mots" : [wordslist.sort(() => .5 - Math.random()).slice(0,25)]}
 let random = wordslist.sort(() => .5 - Math.random()).slice(0,25)
 // Je récupère la liste de mots et j'en tire 25 que je mets dans un array 'random'
 
@@ -24,6 +25,27 @@ const newRandom = random.map((word, index) => {
         position : index
     }
 })
+
+const partieID = 'test1'
+const j1 = 'Michel'
+const j2 = 'Jean'
+const currentPlayer = 'Michel'
+const dernierIndice = ['lapin', '10']
+
+newRandom.push({
+    couleurJ1: '',
+    couleurJ2: '',
+    mot: '',
+    position : '',
+    partie: partieID,
+    j1: j1,
+    j2: j2,
+    currentPlayer: currentPlayer,
+    dernierIndice: dernierIndice
+})
+
+
+
 
 
 // 
@@ -96,8 +118,8 @@ function chiffreIndice(n) {
     <div class="app">
         <div class="app-nav">
             <div class="app-nav-content app-nav-content1">
-                <BoutonMenu :content=bouton1[0] :variant=bouton1[1] :link=bouton1[2] />
-                <BoutonMenu :variant=joueurConnecte :link=bouton1[2] />
+                <BoutonMenu :content=bouton1[0] :variant=2 :link=bouton1[2] />
+                <BoutonMenu :variant=newRandom[25].currentPlayer :link=bouton1[2] />
             </div>
             <div class="app-nav-content app-nav-content2">
                 <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
@@ -107,8 +129,8 @@ function chiffreIndice(n) {
            
         <div class="indice-output">
             <span class="indice-indice">Indice :  </span>
-            <span class="indice-output-zone"></span>
-            <span class="indice-output-chiffre"></span>
+            <span class="indice-output-zone">{{ newRandom[25].dernierIndice[0] }}</span>
+            <span class="indice-output-chiffre">{{ newRandom[25].dernierIndice[1] }}</span>
         </div>
         <div class="joueur-container">
             <div class="joueur-content-left">
@@ -116,7 +138,7 @@ function chiffreIndice(n) {
             </div>
             <div class="joueur-content-center">
                 <div class="plateau">
-                    <template v-for="word in newRandom">
+                    <template v-for="word in newRandom.slice(0,25)">
                        <CardGame :mot="word.mot" :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 />
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
@@ -124,7 +146,7 @@ function chiffreIndice(n) {
             </div>
             <div class="joueur-content-right">
                 <div class="grille" >
-                    <span v-for="word in newRandom">
+                    <span v-for="word in newRandom.slice(0,25)">
                         <CardGrille :couleur=word.couleurJ1 :position=word.position />
                     </span>
                 </div>
@@ -141,6 +163,7 @@ function chiffreIndice(n) {
                 <button name="indice-sender" class="indice-button">Valider l'indice</button>
             </div>
         </div>
+        <button v-on:click="exportToJsonFile(newRandom)">oui</button>
     </div>
 
 </template>

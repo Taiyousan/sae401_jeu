@@ -1,17 +1,23 @@
 <script>
 export default {
-    props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur'],
+    props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur', 'clicked'],
     name : 'CardGame',
     mounted() {
         setTimeout(() => {
             this.$el.style.transform = 'translateY(0px)'
         }, this.position*100)
+        if (this.clicked == true) {
+            this.$el.style.backgroundColor = this.couleur;
+        }
     },
     methods: {
         clicked(e){
             console.log(this.opponentCouleur)
             const clickedCard = e.target
-            if(this.opponentCouleur == "black"){
+            if(this.clicked == true){
+                console.log("Vous avez déjà cliqué sur cette carte")
+            }else{
+                if(this.opponentCouleur == "black"){
                 clickedCard.style.backgroundColor = "black";
             }
             if (this.opponentCouleur == "green") {
@@ -24,6 +30,7 @@ export default {
             setTimeout(() => {
                 this.$el.style.transform = 'translateY(0px)'
             }, 100)
+            }
         },
     }
 
