@@ -7,6 +7,9 @@ export default {
         setTimeout(() => {
             this.$el.style.transform = 'translateX(0px)'
         }, this.position*100)
+        if(this.couleur == "#f2c667") {
+             this.$el.style.backgroundColor = "#f9e4b7";
+            }
     },
   }
 

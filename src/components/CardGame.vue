@@ -7,12 +7,11 @@ export default {
             this.$el.style.transform = 'translateY(0px)'
         }, this.position*100)
         if (this.clicked == true) {
-            this.$el.style.backgroundColor = this.couleur;
+            this.$el.style.backgroundColor = this.opponentCouleur;
         }
     },
     methods: {
         clicked(e){
-            console.log(this.opponentCouleur)
             const clickedCard = e.target
             if(this.clicked == true){
                 console.log("Vous avez déjà cliqué sur cette carte")
@@ -23,7 +22,7 @@ export default {
             if (this.opponentCouleur == "green") {
                 clickedCard.style.backgroundColor = "green";
              
-            } if(this.opponentCouleur == "#f9e4b7") {
+            } if(this.opponentCouleur == "#f2c667") {
              clickedCard.style.backgroundColor = "#f2c667";   
             }
             this.$el.style.transform = 'translateY(-10px)'

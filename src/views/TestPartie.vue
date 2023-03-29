@@ -16,61 +16,21 @@ axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, A
 //TEST POUR RECUPERER LE JSON DEPUIS SYMFONY
 const jsonData = ref(null)
 
+
 fetch('http://localhost:8000/json/testsaved.json')
   .then(response => {
     return response.json();
   })
   .then(data => {
     jsonData.value = data
-    console.log(jsonData.value[0])
   })
   .catch(error => {
     console.log(error)
   })
-
-
-// let random = {"mots" : [wordslist.sort(() => .5 - Math.random()).slice(0,25)]}
-let random = wordslist.sort(() => .5 - Math.random()).slice(0,25)
-// Je récupère la liste de mots et j'en tire 25 que je mets dans un array 'random'
-
-const CardCouleursJ1 = couleurslist.sort((a, b) => 0.5 - Math.random());
-// Je récupère la liste de couleurs et je les mets dans un array 'CardCouleursJ1' et je les mélange
-
-const CardCouleursJ2 = couleurslistj2.sort((a, b) => 0.5 - Math.random());
-// Je récupère la liste de couleurs et je les mets dans un array 'CardCouleursJ2' et je les mélange
-
-const newRandom = random.map((word, index) => {
-    return  {
-        couleurJ1: CardCouleursJ1[index],
-        couleurJ2: CardCouleursJ2[index],
-        mot: word,
-        position : index
-    }
-})
-
-const partieID = 'test1'
-const j1 = 'Michel'
-const j2 = 'Jean'
-const currentPlayer = 'Michel'
-const dernierIndice = ['lapin', '10']
-
-newRandom.push({
-    couleurJ1: '',
-    couleurJ2: '',
-    mot: '',
-    position : '',
-    partie: partieID,
-    j1: j1,
-    j2: j2,
-    currentPlayer: currentPlayer,
-    dernierIndice: dernierIndice
-})
-
-
-
-
-
-
+  
+  onMounted(() => {
+    console.table(jsonData.value.newRandom)
+  })
 
 // 
 // Je crée un nouvel array 'newRandom' qui contient les mots de 'random' et une couleur pour le joueur 1 et une couleur pour le joueur 2
@@ -134,8 +94,8 @@ function chiffreIndice(n) {
 
 function saveClick(i){
     console.log(i)
-    newRandom[i].clicked = true;
-    console.log(newRandom[i])
+    // newRandom[i].clicked = true;
+    console.log(jsonData.value.newRandom[i])
 }
 
 
@@ -144,24 +104,24 @@ function saveClick(i){
 function postJson() {
     const output = document.querySelector(".indice-output-zone");
     const outputChiffre = document.querySelector(".indice-output-chiffre");
-    newRandom[25].dernierIndice[0] = output.innerHTML
-    newRandom[25].dernierIndice[1] = outputChiffre.innerHTML
-    console.log(newRandom[25].dernierIndice)
-    axios.post('http://localhost:8000/update/json', {
-    newRandom
-})
+    jsonData.value.newRandom[25].dernierIndice[0] = output.innerHTML
+    jsonData.value.newRandom[25].dernierIndice[1] = outputChiffre.innerHTML
+    console.log(jsonData.value.newRandom[25].dernierIndice)
+    axios.post('http://localhost:8000/update/json', jsonData.value)
 }
 
 
 
 </script>
 
+
+
 <template>
     <div class="app">
         <div class="app-nav">
             <div class="app-nav-content app-nav-content1">
                 <BoutonMenu :content=bouton1[0] :variant=2 :link=bouton1[2] />
-                <BoutonMenu :variant=newRandom[25].currentPlayer :link=bouton1[2] />
+                <BoutonMenu :variant=jsonData.newRandom[25].currentPlayer :link=bouton1[2] />
             </div>
             <div class="app-nav-content app-nav-content2">
                 <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
@@ -172,8 +132,8 @@ function postJson() {
            
         <div class="indice-output">
             <span class="indice-indice">Indice :  </span>
-            <span class="indice-output-zone">{{ newRandom[25].dernierIndice[0] }}</span>
-            <span class="indice-output-chiffre">{{ newRandom[25].dernierIndice[1] }}</span>
+            <span class="indice-output-zone">{{ jsonData.newRandom[25].dernierIndice[0] }}</span>
+            <span class="indice-output-chiffre">{{ jsonData.newRandom[25].dernierIndice[1] }}</span>
         </div>
         <div class="joueur-container">
             <div class="joueur-content-left">
@@ -206,6 +166,7 @@ function postJson() {
                 <button name="indice-sender" class="indice-button">Valider l'indice</button>
             </div>
         </div>
+        
         <button v-on:click="exportToJsonFile(newRandom)">oui</button>
         <button v-on:click="postJson()">post</button>
     </div>

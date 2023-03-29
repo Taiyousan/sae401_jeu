@@ -2,6 +2,5 @@
 
 # Reste à faire
 - régler problème de changement de taille au build
-- régler problème CORS
 
-- régler problème des mots qui se régénèrent. conflit avec newrandom et jsondata. Comment exploiter jsondata ?
+- trouver un moyen de mettre à jour les props des composants. Ils se mettent à jour si je refresh, mais pas avec la fonction reload.

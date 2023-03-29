@@ -2,79 +2,69 @@
 import CardGame from '../components/CardGame.vue';
 import CardGrille from '../components/CardGrille.vue';
 import BoutonMenu from '../components/BoutonMenu.vue';
-import wordslist from '../assets/data/wordslist.json';
-import couleurslist from '../assets/data/couleurs.json';
-import couleurslistj2 from '../assets/data/couleursj2.json';
 import { onMounted, VueElement } from 'vue';
 import { ref } from 'vue';
 import axios from 'axios';
 
+
+//trucs axios
 axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080'; // Remplacez l'URL par l'URL de votre application Vue.js
 axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
 axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
 
-//TEST POUR RECUPERER LE JSON DEPUIS SYMFONY
-const jsonData = ref(null)
+//Je récupère les données de la partie depuis symfony
 
-fetch('http://localhost:8000/json/testsaved.json')
-  .then(response => {
-    return response.json();
-  })
-  .then(data => {
-    jsonData.value = data
-    console.log(jsonData.value[0])
-  })
-  .catch(error => {
-    console.log(error)
-  })
+let jsonData = ref([]);
+let currentPlayer = ref([]);
+let dernierIndice = ref([]);
 
+//   onMounted(async () => {
+//     try {
+//         console.log('etape1')
+//       const response = await fetch('http://localhost:8000/json/testsaved.json');
+//         console.log('etape2')
+//       if (response.ok) {
+//         jsonData.value = await response.json();
+//         console.table(jsonData.value);
+//         currentPlayer.value = jsonData.value[25].currentPlayer;
+//         dernierIndice.value = jsonData.value[25].dernierIndice;
+//       } else {
+//         throw new Error('Network response was not ok');
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   });
 
-// let random = {"mots" : [wordslist.sort(() => .5 - Math.random()).slice(0,25)]}
-let random = wordslist.sort(() => .5 - Math.random()).slice(0,25)
-// Je récupère la liste de mots et j'en tire 25 que je mets dans un array 'random'
-
-const CardCouleursJ1 = couleurslist.sort((a, b) => 0.5 - Math.random());
-// Je récupère la liste de couleurs et je les mets dans un array 'CardCouleursJ1' et je les mélange
-
-const CardCouleursJ2 = couleurslistj2.sort((a, b) => 0.5 - Math.random());
-// Je récupère la liste de couleurs et je les mets dans un array 'CardCouleursJ2' et je les mélange
-
-const newRandom = random.map((word, index) => {
-    return  {
-        couleurJ1: CardCouleursJ1[index],
-        couleurJ2: CardCouleursJ2[index],
-        mot: word,
-        position : index
+async function loadData() {
+  try {
+    const response = await fetch('http://localhost:8000/json/testsaved.json')
+    if (response.ok) {
+      jsonData.value = await response.json()
+      currentPlayer.value = jsonData.value[25].currentPlayer
+      dernierIndice.value = jsonData.value[25].dernierIndice
+    } else {
+      throw new Error('Network response was not ok')
     }
-})
+  } catch (error) {
+    console.log(error)
+  }
+}
 
-const partieID = 'test1'
-const j1 = 'Michel'
-const j2 = 'Jean'
-const currentPlayer = 'Michel'
-const dernierIndice = ['lapin', '10']
-
-newRandom.push({
-    couleurJ1: '',
-    couleurJ2: '',
-    mot: '',
-    position : '',
-    partie: partieID,
-    j1: j1,
-    j2: j2,
-    currentPlayer: currentPlayer,
-    dernierIndice: dernierIndice
+onMounted(async () => {
+  await loadData()
+  setInterval(loadData, 3000)
 })
 
 
+  
 
+  
+  
+    //lire le fichier JSON dans la console en tableau
+    //???????????????????
 
-
-
-
-// 
-// Je crée un nouvel array 'newRandom' qui contient les mots de 'random' et une couleur pour le joueur 1 et une couleur pour le joueur 2
-
+//le bouton pour exporter le fichier JSON
 function exportToJsonFile(jsonData) {
     let dataStr = JSON.stringify(jsonData);
     let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -86,6 +76,8 @@ function exportToJsonFile(jsonData) {
     linkElement.setAttribute('download', exportFileDefaultName);
     linkElement.click();
 }
+
+//les infos des boutons
 const bouton1 = [
     'Joueurs : ',
     '2',
@@ -99,11 +91,9 @@ const boutonReset = [
     'Réinitialiser',
     'lien'
 ]
+//--------------------
 
-
-const joueurConnecte = 'Michel';
-
-
+//la gestion de l'output de l'indice
 onMounted(() => { 
     const input = document.querySelector(".indice-input");
     const output = document.querySelector(".indice-output-zone");
@@ -124,36 +114,44 @@ onMounted(() => {
         button.click();
     }});
 });
+//----------------------------------
 
-
+//la gestion du chiffre de l'indice
 function chiffreIndice(n) {
     console.log(n);
     const output = document.querySelector(".indice-input-chiffre");
     output.value = n;
 }
-
-function saveClick(i){
-    console.log(i)
-    newRandom[i].clicked = true;
-    console.log(newRandom[i])
-}
-
-
+//---------------------------------
 
 // Envoyer une requête POST pour mettre à jour le fichier JSON
 function postJson() {
-    const output = document.querySelector(".indice-output-zone");
-    const outputChiffre = document.querySelector(".indice-output-chiffre");
-    newRandom[25].dernierIndice[0] = output.innerHTML
-    newRandom[25].dernierIndice[1] = outputChiffre.innerHTML
-    console.log(newRandom[25].dernierIndice)
-    axios.post('http://localhost:8000/update/json', {
-    newRandom
-})
+    axios.post('http://localhost:8000/update/json', jsonData.value)
 }
 
+//la fonction pour sauvegarder le dernier indice
+function saveIndice(){
+    const output = document.querySelector(".indice-output-zone");
+    const outputChiffre = document.querySelector(".indice-output-chiffre");
+    jsonData.value[25].dernierIndice[0] = output.innerHTML
+    jsonData.value[25].dernierIndice[1] = outputChiffre.innerHTML
+    console.log(jsonData.value[25].dernierIndice)
+    postJson();
+}
 
+//la fonction pour sauvegarder le click sur une carte
+function saveClick(position) {
+    console.log(position);
+    jsonData.value[position].clicked = true;
+    console.log(jsonData.value[position].clicked);
+    postJson();
+}
+//--------------------------------------------------
 
+//la fonction pour recharger la page
+function reloadData() {
+  loadData()
+}
 </script>
 
 <template>
@@ -161,19 +159,17 @@ function postJson() {
         <div class="app-nav">
             <div class="app-nav-content app-nav-content1">
                 <BoutonMenu :content=bouton1[0] :variant=2 :link=bouton1[2] />
-                <BoutonMenu :variant=newRandom[25].currentPlayer :link=bouton1[2] />
+                <BoutonMenu :variant=currentPlayer :link=bouton1[2] />
             </div>
             <div class="app-nav-content app-nav-content2">
                 <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
                 <BoutonMenu :content=boutonReset[0] :link=boutonReset[2] />
             </div>
         </div>
-
-           
         <div class="indice-output">
             <span class="indice-indice">Indice :  </span>
-            <span class="indice-output-zone">{{ newRandom[25].dernierIndice[0] }}</span>
-            <span class="indice-output-chiffre">{{ newRandom[25].dernierIndice[1] }}</span>
+            <span class="indice-output-zone">{{ dernierIndice[0] }}</span>
+            <span class="indice-output-chiffre">{{ dernierIndice[1] }}</span>
         </div>
         <div class="joueur-container">
             <div class="joueur-content-left">
@@ -181,21 +177,22 @@ function postJson() {
             </div>
             <div class="joueur-content-center">
                 <div class="plateau">
-                    <template v-for="word in jsonData.newRandom.slice(0,25)">
+                    <template v-for="word in jsonData.slice(0,25)">
                        <CardGame :mot="word.mot" :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 :clicked=word.clicked v-on:click="saveClick(word.position)"/>
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
                 </div>
             </div>
+            
+        
             <div class="joueur-content-right">
                 <div class="grille" >
-                    <span v-for="word in jsonData.newRandom.slice(0,25)">
+                    <span v-for="word in jsonData.slice(0,25)">
                         <CardGrille :couleur=word.couleurJ1 :position=word.position />
                     </span>
                 </div>
             </div>
         </div>
-
         <div class="indice-sender-container">
             <div class="chiffres">
                 <button v-for="n in 10" class="chiffre" v-on:click="chiffreIndice(n)">{{n}}</button>
@@ -203,12 +200,14 @@ function postJson() {
             <div class="indice-sender">
                 <input type="text" name="indice-sender" class="indice-input">
                 <input type="text" class="indice-input-chiffre">
-                <button name="indice-sender" class="indice-button">Valider l'indice</button>
+                <button name="indice-sender" class="indice-button" v-on:click="saveIndice()" >Valider l'indice</button>
             </div>
         </div>
-        <button v-on:click="exportToJsonFile(newRandom)">oui</button>
-        <button v-on:click="postJson()">post</button>
+        <button v-on:click="postJson()">POST</button>
+        <button v-on:click="reloadData()">RELOAD</button>
+
     </div>
+
 
 </template>
 
