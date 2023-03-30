@@ -17,6 +17,8 @@ axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, A
 let jsonData = ref([]);
 let currentPlayer = ref([]);
 let dernierIndice = ref([]);
+let isVariableSet = false; // Sert à savoir si la variable a été affectée. Une fois qu'elle a été affectée, on ne la réaffecte plus.
+let clickedArray = ref([]);
 
 //   onMounted(async () => {
 //     try {
@@ -43,6 +45,10 @@ async function loadData() {
       jsonData.value = await response.json()
       currentPlayer.value = jsonData.value[25].currentPlayer
       dernierIndice.value = jsonData.value[25].dernierIndice
+      jsonData.value.forEach((element, index) => {
+        clickedArray.value.splice(index, 1, element.clicked)
+      });
+    //   console.table(clickedArray.value)
     } else {
       throw new Error('Network response was not ok')
     }
@@ -50,6 +56,7 @@ async function loadData() {
     console.log(error)
   }
 }
+
 
 onMounted(async () => {
   await loadData()
@@ -95,26 +102,58 @@ const boutonReset = [
 
 //la gestion de l'output de l'indice
 onMounted(() => { 
-    const input = document.querySelector(".indice-input");
-    const output = document.querySelector(".indice-output-zone");
-    const button = document.querySelector(".indice-button");
-    const outputChiffre = document.querySelector(".indice-output-chiffre");
-    const inputChiffre = document.querySelector(".indice-input-chiffre");
-    // envoi du mot si je clique sur le bouton
-    button.addEventListener("click", (event) => {
-    output.innerHTML = input.value;
-    outputChiffre.innerHTML = inputChiffre.value;
-    input.value = '';
-    inputChiffre.value = '';
-    });
-    // envoi du mot si je clique sur la touche entrée
-    input.addEventListener("keyup", (event) => {
-    if (event.keyCode === 13) {
-        event.preventDefault();
-        button.click();
-    }});
+    // const input = document.querySelector(".indice-input");
+    // const output = document.querySelector(".indice-output-zone");
+    // const button = document.querySelector(".indice-button");
+    // const outputChiffre = document.querySelector(".indice-output-chiffre");
+    // const inputChiffre = document.querySelector(".indice-input-chiffre");
+    // // envoi du mot si je clique sur le bouton
+    // button.addEventListener("click", (event) => {
+    // output.innerHTML = input.value;
+    // outputChiffre.innerHTML = inputChiffre.value;
+    // input.value = '';
+    // inputChiffre.value = '';
+    // });
+    // // envoi du mot si je clique sur la touche entrée
+    // input.addEventListener("keyup", (event) => {
+    // if (event.keyCode === 13) {
+    //     event.preventDefault();
+    //     button.click();
+    // }});
 });
 //----------------------------------
+
+//indice + sauvagarde
+function indiceSave(){
+    //constantes
+    const outputMot = document.querySelector(".indice-output-zone");
+    const outputChiffre = document.querySelector(".indice-output-chiffre");
+    const inputChiffre = document.querySelector(".indice-input-chiffre");
+    const inputMot = document.querySelector(".indice-input");
+
+    //sauvegarde
+    jsonData.value[25].dernierIndice[0] = inputMot.value
+    jsonData.value[25].dernierIndice[1] = inputChiffre.value
+
+   
+
+    //affichage
+    outputMot.innerHTML = inputMot.value;
+    outputChiffre.innerHTML = inputChiffre.value;
+
+    //nettoyage des inputs
+    inputMot.value = '';
+    inputChiffre.value = '';
+    postJson();
+    // loadData();
+
+    setTimeout(() => {
+        loadData();
+    }, 1000);
+    
+    
+
+}
 
 //la gestion du chiffre de l'indice
 function chiffreIndice(n) {
@@ -126,17 +165,21 @@ function chiffreIndice(n) {
 
 // Envoyer une requête POST pour mettre à jour le fichier JSON
 function postJson() {
+    console.log('lancement de la fonction postJson')
     axios.post('http://localhost:8000/update/json', jsonData.value)
+    console.log('fin de la fonction postJson')
 }
 
 //la fonction pour sauvegarder le dernier indice
 function saveIndice(){
-    const output = document.querySelector(".indice-output-zone");
-    const outputChiffre = document.querySelector(".indice-output-chiffre");
-    jsonData.value[25].dernierIndice[0] = output.innerHTML
-    jsonData.value[25].dernierIndice[1] = outputChiffre.innerHTML
-    console.log(jsonData.value[25].dernierIndice)
-    postJson();
+    // const output = document.querySelector(".indice-output-zone");
+    // const outputChiffre = document.querySelector(".indice-output-chiffre");
+    // jsonData.value[25].dernierIndice[0] = output.innerHTML
+    // console.log(output.innerHTML)
+    // jsonData.value[25].dernierIndice[1] = outputChiffre.innerHTML
+    // // console.log(jsonData.value[25].dernierIndice)
+    // console.log('bg')
+    // postJson();
 }
 
 //la fonction pour sauvegarder le click sur une carte
@@ -177,8 +220,8 @@ function reloadData() {
             </div>
             <div class="joueur-content-center">
                 <div class="plateau">
-                    <template v-for="word in jsonData.slice(0,25)">
-                       <CardGame :mot="word.mot" :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 :clicked=word.clicked v-on:click="saveClick(word.position)"/>
+                    <template v-for="(word, index) in jsonData.slice(0,25)">
+                       <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 :clicked=clickedArray[index] v-on:click="saveClick(word.position)"/>
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
                 </div>
@@ -200,7 +243,7 @@ function reloadData() {
             <div class="indice-sender">
                 <input type="text" name="indice-sender" class="indice-input">
                 <input type="text" class="indice-input-chiffre">
-                <button name="indice-sender" class="indice-button" v-on:click="saveIndice()" >Valider l'indice</button>
+                <button name="indice-sender" class="indice-button" v-on:click="indiceSave()" >Valider l'indice</button>
             </div>
         </div>
         <button v-on:click="postJson()">POST</button>

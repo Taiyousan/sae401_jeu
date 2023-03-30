@@ -1,16 +1,16 @@
 <script>
+import { watch } from 'vue';
+
 export default {
     props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur', 'clicked'],
     name : 'CardGame',
-    mounted() {
-        setTimeout(() => {
-            this.$el.style.transform = 'translateY(0px)'
-        }, this.position*100)
-        if (this.clicked == true) {
-            this.$el.style.backgroundColor = this.opponentCouleur;
-        }
-    },
     methods: {
+        affichageCouleur() {
+            if (this.clicked == true) {
+            this.$el.style.backgroundColor = this.opponentCouleur;
+            console.log("banane")
+        }
+        },
         clicked(e){
             const clickedCard = e.target
             if(this.clicked == true){
@@ -31,7 +31,21 @@ export default {
             }, 100)
             }
         },
+    },
+    mounted() {
+        setTimeout(() => {
+            this.$el.style.transform = 'translateY(0px)'
+        }, this.position*100),
+        this.affichageCouleur()
+    },
+    watch: {
+    clicked: {
+      handler() {
+        this.affichageCouleur();
+      },
+      deep: true
     }
+  }
 
   }
 
@@ -43,7 +57,7 @@ export default {
 </script>
 
 <template>
-    <div class="card" v-on:click="clicked($event)" v-on:load="slideIn($event)" >
+    <div class="card" v-on:click="clicked($event)" v-on:load="slideIn($event)"  >
         <div class="card-mot-container" v-on:click.stop>
             <div class="card-mot" v-on:click.stop>
                 <p v-on:click.stop>{{this.mot.toUpperCase()}}</p>
