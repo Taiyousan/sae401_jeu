@@ -43,12 +43,12 @@ async function loadData() {
     const response = await fetch('http://localhost:8000/json/testsaved.json')
     if (response.ok) {
       jsonData.value = await response.json()
-      currentPlayer.value = jsonData.value[25].currentPlayer
+      currentPlayer.value = jsonData.value[25].j2
       dernierIndice.value = jsonData.value[25].dernierIndice
       jsonData.value.forEach((element, index) => {
         clickedArray.value.splice(index, 1, element.clicked)
       });
-    //   console.table(clickedArray.value)
+        
     } else {
       throw new Error('Network response was not ok')
     }
@@ -165,9 +165,24 @@ function chiffreIndice(n) {
 
 // Envoyer une requête POST pour mettre à jour le fichier JSON
 function postJson() {
+    //on lance la requete
     console.log('lancement de la fonction postJson')
     axios.post('http://localhost:8000/update/json', jsonData.value)
     console.log('fin de la fonction postJson')
+
+    // on cache l'output le temps de la requête
+    const output = document.querySelector(".indice-output-zone");
+    const outputChiffre = document.querySelector(".indice-output-chiffre");
+    output.style.opacity = 0;
+    output.style.transition = 'none';
+    outputChiffre.style.opacity = 0;
+    outputChiffre.style.transition = 'none';
+    setTimeout(() => {
+        output.style.transition = 'opacity 0.2s ease-in-out';
+        outputChiffre.style.transition = 'opacity 0.2s ease-in-out';
+        output.style.opacity = 1;
+        outputChiffre.style.opacity = 1;
+    }, 3000);
 }
 
 //la fonction pour sauvegarder le dernier indice
@@ -378,6 +393,7 @@ a {
     margin-left: 30px;
     min-width: 500px;
     font-size: 30px;
+    transition: all 0.5s ease;
 }
 
 .app {
