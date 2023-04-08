@@ -36,7 +36,7 @@ const router = createRouter({
       component: TestPartie
     },
     {
-      path: '/testrebuild',
+      path: '/testrebuild/:id/:joueur',
       component: TestRebuild
     }
   ]

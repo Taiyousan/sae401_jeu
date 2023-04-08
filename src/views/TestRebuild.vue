@@ -3,8 +3,16 @@ import CardGame from '../components/CardGame.vue';
 import CardGrille from '../components/CardGrille.vue';
 import BoutonMenu from '../components/BoutonMenu.vue';
 import { onMounted, VueElement } from 'vue';
+import { useRoute } from 'vue-router';
 import { ref } from 'vue';
 import axios from 'axios';
+
+const joueurActuel = ref('')
+const adversaire = ref('')
+onMounted(() => {
+  const encodedString = window.location.pathname.split('/').pop()
+  joueurActuel.value = atob(encodedString)
+})
 
 
 //trucs axios
@@ -16,9 +24,18 @@ axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, A
 
 let jsonData = ref([]);
 let currentPlayer = ref([]);
+let joueur2 = ref([]);
 let dernierIndice = ref([]);
 let isVariableSet = false; // Sert à savoir si la variable a été affectée. Une fois qu'elle a été affectée, on ne la réaffecte plus.
 let clickedArray = ref([]);
+
+
+
+
+//infos de la route
+const route = useRoute()
+const idpartie = route.params.id
+console.log(idpartie)
 
 //   onMounted(async () => {
 //     try {
@@ -38,13 +55,31 @@ let clickedArray = ref([]);
 //     }
 //   });
 
+
+
 async function loadData() {
   try {
-    const response = await fetch('http://localhost:8000/json/testsaved.json')
+    // const response = await fetch('http://localhost:8000/json/testsaved.json')
+    const response = await fetch(`http://localhost:8000/api/parties/${idpartie}`)
     if (response.ok) {
       jsonData.value = await response.json()
-      currentPlayer.value = jsonData.value[25].j2
+      jsonData.value = jsonData.value.savefile
+        console.table(jsonData.value.savefile)
+    //   je vérifie qui est le joueur, j1 ou j2
+    if (joueurActuel.value == 'j1') {
+        currentPlayer.value = jsonData.value[25].j1
+        adversaire.value = jsonData.value[25].j2
+      } if (joueurActuel.value == 'j2') {
+        currentPlayer.value = jsonData.value[25].j2
+        adversaire.value = jsonData.value[25].j1
+      }
+    
       dernierIndice.value = jsonData.value[25].dernierIndice
+      if (jsonData.value[25].j2 == null) {
+        joueur2.value = "En attente d'un joueur"
+      } else {
+        joueur2.value = jsonData.value[25].j2
+      }
       jsonData.value.forEach((element, index) => {
         clickedArray.value.splice(index, 1, element.clicked)
       });
@@ -60,7 +95,7 @@ async function loadData() {
 
 onMounted(async () => {
   await loadData()
-  setInterval(loadData, 3000)
+  setInterval(loadData, 2000)
 })
 
 
@@ -147,9 +182,20 @@ function indiceSave(){
     postJson();
     // loadData();
 
+     // on cache l'output le temps de la requête
+     const output = document.querySelector(".indice-output-zone");
+    const outputChiffre2 = document.querySelector(".indice-output-chiffre");
+
+    output.style.color = 'transparent';
+    outputChiffre2.style.color = 'transparent';
+    output.classList.add('blinking');
     setTimeout(() => {
+        output.style.color = 'black';
+        outputChiffre2.style.color = 'black';
+        output.classList.remove('blinking');
+    }, 3000);
         loadData();
-    }, 1000);
+  
     
     
 
@@ -167,22 +213,21 @@ function chiffreIndice(n) {
 function postJson() {
     //on lance la requete
     console.log('lancement de la fonction postJson')
-    axios.post('http://localhost:8000/update/json', jsonData.value)
+    axios.put(`http://localhost:8000/api/parties/${idpartie}`, { 
+  ...jsonData.value,
+  savefile: jsonData.value 
+}, {
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+  .then(response => console.log(response))
+  .catch(error => console.log(error));
+
+
     console.log('fin de la fonction postJson')
 
-    // on cache l'output le temps de la requête
-    const output = document.querySelector(".indice-output-zone");
-    const outputChiffre = document.querySelector(".indice-output-chiffre");
-    output.style.opacity = 0;
-    output.style.transition = 'none';
-    outputChiffre.style.opacity = 0;
-    outputChiffre.style.transition = 'none';
-    setTimeout(() => {
-        output.style.transition = 'opacity 0.2s ease-in-out';
-        outputChiffre.style.transition = 'opacity 0.2s ease-in-out';
-        output.style.opacity = 1;
-        outputChiffre.style.opacity = 1;
-    }, 3000);
+   
 }
 
 //la fonction pour sauvegarder le dernier indice
@@ -218,6 +263,7 @@ function reloadData() {
             <div class="app-nav-content app-nav-content1">
                 <BoutonMenu :content=bouton1[0] :variant=2 :link=bouton1[2] />
                 <BoutonMenu :variant=currentPlayer :link=bouton1[2] />
+                <BoutonMenu :variant=adversaire content="Votre équipier :" />
             </div>
             <div class="app-nav-content app-nav-content2">
                 <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
@@ -393,7 +439,17 @@ a {
     margin-left: 30px;
     min-width: 500px;
     font-size: 30px;
-    transition: all 0.5s ease;
+    border-radius: 20px;
+}
+
+.blinking {
+  animation: blink 2s linear infinite;
+}
+
+@keyframes blink {
+  50% {
+    background-color: rgb(229, 229, 229);
+  }
 }
 
 .app {
