@@ -2,14 +2,16 @@
 import { watch } from 'vue';
 
 export default {
-    props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur', 'clicked'],
+    props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur', 'clicked', 'greenfound'],
     name : 'CardGame',
     methods: {
         affichageCouleur() {
             if (this.clicked == true) {
             this.$el.style.backgroundColor = this.opponentCouleur;
-            console.log("banane")
         }
+            if (this.greenfound == true) {
+                this.$el.style.backgroundImage = "url('/src/assets/img/wp3.png')" ;
+            }
         },
         clicked(e){
             const clickedCard = e.target
@@ -24,7 +26,6 @@ export default {
             }
             if (this.opponentCouleur == "green") {
                 clickedCard.style.backgroundColor = "green";
-                this.$emit('updateValue', 'badoum');
              
             } if(this.opponentCouleur == "#f2c667") {
              clickedCard.style.backgroundColor = "#f2c667";

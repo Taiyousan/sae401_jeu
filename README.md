@@ -31,3 +31,8 @@
 
     * Je dois donc créer une entrée greenfoundj1 et greenfoundj2 dans json[25]
     * Je dois créer une entrée clickedj1 et clickedj2 pour chaque carte
+
+# QUAND UNE CARTE VERTE EST TROUVEE (à faire)
+- pour les deux joueurs : la carte est remplacée par une carte verte qui indique qu'on l'a trouvée
+    -> Une entrée "greenfound" est ajoutée. Si elle est true, on change l'image de la carte pour les DEUX joueurs
+- +1 sur le compteur /15

@@ -11,6 +11,7 @@ const rolejoueur = ref('')
 const adversaire = ref('')
 const tourjoueur = ref('')
 const updateValue = ref('')
+const agentstrouves = ref(0)
 onMounted(() => {
   const encodedString = window.location.pathname.split('/').pop()
   rolejoueur.value = atob(encodedString)
@@ -70,6 +71,13 @@ async function loadData() {
 
       //je récupère le current player du json (qui indique de qui c'est le tour) et je le mets dans tourjoueur
       tourjoueur.value = jsonData.value[25].currentPlayer
+
+      //je récupère le nombre d'agents trouvés
+        // jsonData.value.forEach((element, index) => {
+        //     if (element.greenfound == true) {
+        //         agentstrouves.value = agentstrouves.value + 1
+        //     }
+        // });
         
     } else {
       throw new Error('Network response was not ok')
@@ -231,9 +239,18 @@ function saveIndice(){
 
 //la fonction pour sauvegarder le click sur une carte
 function saveClick(position) {
-    console.log(position);
-    jsonData.value[position].clicked = true;
-    console.log(jsonData.value[position].clicked);
+    if (rolejoueur.value === 'j1') {
+        jsonData.value[position].clickedj2 = true;
+        if (jsonData.value[position].couleurJ2 === 'green') {
+            jsonData.value[position].greenfound = true;
+        }
+
+    } else {
+        jsonData.value[position].clickedj1 = true;
+        if (jsonData.value[position].couleurJ1 === 'green') {
+            jsonData.value[position].greenfound = true;
+        }
+    }
     postJson();
 }
 //--------------------------------------------------
@@ -246,7 +263,7 @@ function finTour(){
         postJson();
             setTimeout(() => {
             //redirection pour test
-            window.location.href = "http://127.0.0.1:5173/testrebuild/1/ajI=";
+            window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajI=`;
         }, 1000);
     }
     else{
@@ -255,7 +272,7 @@ function finTour(){
         postJson();
             setTimeout(() => {
             //redirection pour test
-            window.location.href = "http://127.0.0.1:5173/testrebuild/1/ajE=";
+            window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajE=`;
         }, 1000);
     }
     
@@ -277,6 +294,7 @@ function reloadData() {
                 <BoutonMenu content="C'est le tour de : " :variant=tourjoueur />
                 <BoutonMenu :variant=currentPlayer :link=bouton1[2] />
                 <BoutonMenu :variant=adversaire content="Votre équipier :" />
+                <BoutonMenu :variant=agentstrouves content="Agents trouvés sur 15 : " />
             </div>
             <div class="app-nav-content app-nav-content2">
                 <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
@@ -295,11 +313,11 @@ function reloadData() {
             <div class="joueur-content-center">
                 <div class="plateau">
                     <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j1'">
-                       <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 :clicked=clickedArray[index] v-on:click="saveClick(word.position)" @value-emitted="updateValue" />
+                       <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj2 :greenfound=word.greenfound />
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
                     <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j2'">
-                       <CardGame :mot=word.mot :couleur=word.couleurJ2 :opponentCouleur=word.couleurJ1 :position=word.position :joueur=1 :clicked=clickedArray[index] v-on:click="saveClick(word.position)" @value-emitted="updateValue" />
+                       <CardGame :mot=word.mot :couleur=word.couleurJ2 :opponentCouleur=word.couleurJ1 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj1 :greenfound=word.greenfound />
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
                 </div>
@@ -309,10 +327,10 @@ function reloadData() {
             <div class="joueur-content-right">
                 <div class="grille" >
                     <span v-for="word in jsonData.slice(0,25)" v-if="rolejoueur === 'j1'">
-                        <CardGrille :couleur=word.couleurJ1 :position=word.position />
+                        <CardGrille :couleur=word.couleurJ1 :position=word.position  />
                     </span>
                     <span v-for="word in jsonData.slice(0,25)" v-if="rolejoueur === 'j2'">
-                        <CardGrille :couleur=word.couleurJ2 :position=word.position />
+                        <CardGrille :couleur=word.couleurJ2 :position=word.position  />
                     </span>
                 </div>
             </div>
