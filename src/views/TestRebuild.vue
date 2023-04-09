@@ -7,11 +7,13 @@ import { useRoute } from 'vue-router';
 import { ref } from 'vue';
 import axios from 'axios';
 
-const joueurActuel = ref('')
+const rolejoueur = ref('')
 const adversaire = ref('')
+const tourjoueur = ref('')
+const updateValue = ref('')
 onMounted(() => {
   const encodedString = window.location.pathname.split('/').pop()
-  joueurActuel.value = atob(encodedString)
+  rolejoueur.value = atob(encodedString)
 })
 
 
@@ -37,25 +39,6 @@ const route = useRoute()
 const idpartie = route.params.id
 console.log(idpartie)
 
-//   onMounted(async () => {
-//     try {
-//         console.log('etape1')
-//       const response = await fetch('http://localhost:8000/json/testsaved.json');
-//         console.log('etape2')
-//       if (response.ok) {
-//         jsonData.value = await response.json();
-//         console.table(jsonData.value);
-//         currentPlayer.value = jsonData.value[25].currentPlayer;
-//         dernierIndice.value = jsonData.value[25].dernierIndice;
-//       } else {
-//         throw new Error('Network response was not ok');
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   });
-
-
 
 async function loadData() {
   try {
@@ -66,10 +49,11 @@ async function loadData() {
       jsonData.value = jsonData.value.savefile
         console.table(jsonData.value.savefile)
     //   je vérifie qui est le joueur, j1 ou j2
-    if (joueurActuel.value == 'j1') {
+    console.log(rolejoueur.value)
+    if (rolejoueur.value == 'j1') {
         currentPlayer.value = jsonData.value[25].j1
         adversaire.value = jsonData.value[25].j2
-      } if (joueurActuel.value == 'j2') {
+      } if (rolejoueur.value == 'j2') {
         currentPlayer.value = jsonData.value[25].j2
         adversaire.value = jsonData.value[25].j1
       }
@@ -83,6 +67,9 @@ async function loadData() {
       jsonData.value.forEach((element, index) => {
         clickedArray.value.splice(index, 1, element.clicked)
       });
+
+      //je récupère le current player du json (qui indique de qui c'est le tour) et je le mets dans tourjoueur
+      tourjoueur.value = jsonData.value[25].currentPlayer
         
     } else {
       throw new Error('Network response was not ok')
@@ -251,6 +238,31 @@ function saveClick(position) {
 }
 //--------------------------------------------------
 
+//la fonction pour terminer son tour
+function finTour(){
+    if(tourjoueur.value === jsonData.value[25].j1){
+        tourjoueur.value = jsonData.value[25].j2
+        jsonData.value[25].currentPlayer = jsonData.value[25].j2
+        postJson();
+            setTimeout(() => {
+            //redirection pour test
+            window.location.href = "http://127.0.0.1:5173/testrebuild/1/ajI=";
+        }, 1000);
+    }
+    else{
+        tourjoueur.value = jsonData.value[25].j1
+        jsonData.value[25].currentPlayer = jsonData.value[25].j1
+        postJson();
+            setTimeout(() => {
+            //redirection pour test
+            window.location.href = "http://127.0.0.1:5173/testrebuild/1/ajE=";
+        }, 1000);
+    }
+    
+
+    
+}
+
 //la fonction pour recharger la page
 function reloadData() {
   loadData()
@@ -259,15 +271,16 @@ function reloadData() {
 
 <template>
     <div class="app">
+        <p>{{ updateValue }}</p>
         <div class="app-nav">
             <div class="app-nav-content app-nav-content1">
-                <BoutonMenu :content=bouton1[0] :variant=2 :link=bouton1[2] />
+                <BoutonMenu content="C'est le tour de : " :variant=tourjoueur />
                 <BoutonMenu :variant=currentPlayer :link=bouton1[2] />
                 <BoutonMenu :variant=adversaire content="Votre équipier :" />
             </div>
             <div class="app-nav-content app-nav-content2">
                 <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
-                <BoutonMenu :content=boutonReset[0] :link=boutonReset[2] />
+                <BoutonMenu content="Terminer mon tour" v-on:click="finTour()" />
             </div>
         </div>
         <div class="indice-output">
@@ -281,8 +294,12 @@ function reloadData() {
             </div>
             <div class="joueur-content-center">
                 <div class="plateau">
-                    <template v-for="(word, index) in jsonData.slice(0,25)">
-                       <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 :clicked=clickedArray[index] v-on:click="saveClick(word.position)"/>
+                    <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j1'">
+                       <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1 :clicked=clickedArray[index] v-on:click="saveClick(word.position)" @value-emitted="updateValue" />
+                       <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
+                    </template>
+                    <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j2'">
+                       <CardGame :mot=word.mot :couleur=word.couleurJ2 :opponentCouleur=word.couleurJ1 :position=word.position :joueur=1 :clicked=clickedArray[index] v-on:click="saveClick(word.position)" @value-emitted="updateValue" />
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
                 </div>
@@ -291,8 +308,11 @@ function reloadData() {
         
             <div class="joueur-content-right">
                 <div class="grille" >
-                    <span v-for="word in jsonData.slice(0,25)">
+                    <span v-for="word in jsonData.slice(0,25)" v-if="rolejoueur === 'j1'">
                         <CardGrille :couleur=word.couleurJ1 :position=word.position />
+                    </span>
+                    <span v-for="word in jsonData.slice(0,25)" v-if="rolejoueur === 'j2'">
+                        <CardGrille :couleur=word.couleurJ2 :position=word.position />
                     </span>
                 </div>
             </div>

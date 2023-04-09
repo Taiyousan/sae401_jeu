@@ -23,3 +23,11 @@
 - Sur vue, j'ai deux vue : 
     * une pour le j1, qui est ouverte avec symfony lors du lancement de la partie
     * une pour le j2, qui est ouverte avec symfony avec la création du lien pour rejoindre
+
+# enregistrer le nombre de cartes vertes sur lesquelles on a cliqué
+- Au reload du json :
+    - je fais un foreach qui cherche dans le tableau les entrées dont clicked = true et couleur = green
+    - Quand c'est le cas, je fais un +1 dans json[25].greenfound
+
+    * Je dois donc créer une entrée greenfoundj1 et greenfoundj2 dans json[25]
+    * Je dois créer une entrée clickedj1 et clickedj2 pour chaque carte

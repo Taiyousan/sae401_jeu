@@ -18,12 +18,16 @@ export default {
             }else{
                 if(this.opponentCouleur == "black"){
                 clickedCard.style.backgroundColor = "black";
+                setTimeout(() => {
+                    alert("Vous avez perdu")
+                }, 1000)
             }
             if (this.opponentCouleur == "green") {
                 clickedCard.style.backgroundColor = "green";
+                this.$emit('updateValue', 'badoum');
              
             } if(this.opponentCouleur == "#f2c667") {
-             clickedCard.style.backgroundColor = "#f2c667";   
+             clickedCard.style.backgroundColor = "#f2c667";
             }
             this.$el.style.transform = 'translateY(-10px)'
             setTimeout(() => {
