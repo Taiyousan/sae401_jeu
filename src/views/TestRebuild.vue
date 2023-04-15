@@ -9,7 +9,11 @@ import axios from 'axios';
 import { Modal } from 'usemodal-vue3';
 
 //visibilité du modal :
-let isVisible = ref(false);
+let isVisible= ref(false);
+
+//infos du modal
+let modalTitre = ref()
+let modalTexte = ref()
 
 
 //j1 ou j2, récupéré dans l'url :
@@ -60,6 +64,19 @@ async function loadData() {
       jsonData.value = await response.json()
       jsonData.value = jsonData.value.savefile
         console.table(jsonData.value.savefile)
+        // Je vérifie si la partie est perdue ou non
+            // Si elle est perdue parce qu'il n'y a plus de jetons :
+        if (jsonData.value[25].etat == "perdu" && jsonData.value[25].jetonsrestants == 0) {
+            modalTitre.value = "A COURT DE TEMPS"
+            modalTexte.value = "Vous n'avez plus de jetons, vous avez perdu ! Vous et votre partenaire avez échoué."
+            isVisible.value = true
+            // Si elle est perdue parce qu'on a trouvé l'assassin :
+        } else if (jsonData.value[25].etat == "perdu") {
+            modalTitre.value = "ASSASSIN !"
+            modalTexte.value = "Vous avez trouvé l'assassin, vous avez perdu ! Vous et votre partenaire avez échoué."
+            isVisible.value = true
+        }
+
     //   je vérifie qui est le joueur, j1 ou j2
     if (rolejoueur.value == 'j1') {
         currentPlayer.value = jsonData.value[25].j1
@@ -88,8 +105,9 @@ async function loadData() {
         //je récupère le nombre de jetons restants
         jetonsrestants.value = jsonData.value[25].jetonsrestants
         if(jetonsrestants.value == 0){
-            isVisible.value = true
             jsonData.value[25].etat = "perdu"
+            postJson();
+            isVisible.value = true
         }
 
         //je cache ou affiche le formulaire d'inidice
@@ -351,8 +369,8 @@ function reloadData() {
 
 <template>
     <div class="app">
-         <Modal v-model:visible="isVisible" :closable="false" title="CARTE ASSASSIN" :cancelButton="{ text: 'Retourner au profil', onclick: quitter }" :okButton="{ text: 'Quitter', onclick: quitter }">
-            <div>Vous êtes tombé sur un assassin... Pas de chance ! Vous et votre partenaire avez perdu. </div>
+         <Modal v-model:visible="isVisible" :closable="false" :title=modalTitre :cancelButton="{ text: 'Retourner au profil', onclick: quitter }" :okButton="{ text: 'Quitter', onclick: quitter }">
+            <div>{{ modalTexte }} </div>
         </Modal>
         <p>{{ updateValue }}</p>
         <div class="app-nav">
