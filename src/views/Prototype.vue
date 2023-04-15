@@ -6,6 +6,17 @@ import couleurslist from '../assets/data/couleurs.json';
 import couleurslistj2 from '../assets/data/couleursj2.json';
 import { VueElement } from 'vue';
 
+//popup
+import { ref } from 'vue';
+import { Modal } from 'usemodal-vue3';
+
+let isVisible = ref(false);
+const infos = {
+  text: "Doe"
+};
+
+
+
 let random = wordslist.sort(() => .5 - Math.random()).slice(0,25)
 // Je récupère la liste de mots et j'en tire 25 que je mets dans un array 'random'
 
@@ -49,7 +60,10 @@ function exportToJsonFile(jsonData) {
 
 <template>
     <div class="app">
-        <h1>PLATEAU DU JOUEUR 1</h1>
+        <h1 v-on:click="isVisible = true">PLATEAU DU JOUEUR 1</h1>
+        <Modal v-model:visible="isVisible" title="PERDU" :cancelButton="{ text: 'Annuler', onclick: null }" :closable="false" modalClass="oui" >
+            <div>Vous avez perdu !</div>
+        </Modal>
             <p class="indication">Cette partie est générée aléatoirement. Les plateaux sont différents à chaque refresh, mais on peut en sauvegarder la configuration avec le bouton en bas, qui génère un .json. On peut réutiliser ce .json pour générer le même plateau plus tard.
             </p>
             <p class="indication">Pour générer un nouveau plateau, il faut cliquer sur un autre bouton du menu en haut puis revenir sur "jeu".</p>
@@ -87,6 +101,9 @@ function exportToJsonFile(jsonData) {
 </template>
 
 <style scoped>
+
+
+
 .plateau {
     /* border: 8px solid black; */
     width: 60vw;

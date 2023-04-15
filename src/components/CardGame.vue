@@ -23,9 +23,7 @@ export default {
             }else{
                 if(this.opponentCouleur == "black"){
                 clickedCard.style.backgroundColor = "black";
-                setTimeout(() => {
-                    alert("Vous avez perdu")
-                }, 1000)
+                
             }
             if (this.opponentCouleur == "green") {
                 clickedCard.style.backgroundColor = "green";

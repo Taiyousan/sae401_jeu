@@ -6,6 +6,11 @@ import { onMounted, VueElement } from 'vue';
 import { useRoute } from 'vue-router';
 import { ref } from 'vue';
 import axios from 'axios';
+import { Modal } from 'usemodal-vue3';
+
+//visibilité du modal :
+let isVisible = ref(false);
+
 
 //j1 ou j2, récupéré dans l'url :
 const rolejoueur = ref('')
@@ -14,6 +19,7 @@ const adversaire = ref('')
 const tourjoueur = ref('')
 const updateValue = ref('')
 const agentstrouves = ref(0)
+const jetonsrestants = ref(0)
 
 //une variable qui sert à savoir si les cartes sont cliquables
 const isDisabled = ref(false)
@@ -78,6 +84,13 @@ async function loadData() {
 
         //je récupère le nombre d'agents trouvés
         agentstrouves.value = jsonData.value[25].agentstrouves
+
+        //je récupère le nombre de jetons restants
+        jetonsrestants.value = jsonData.value[25].jetonsrestants
+        if(jetonsrestants.value == 0){
+            isVisible.value = true
+            jsonData.value[25].etat = "perdu"
+        }
 
         //je cache ou affiche le formulaire d'inidice
       if (currentPlayer.value == jsonData.value[25].currentPlayer) {
@@ -196,9 +209,8 @@ function indiceSave(){
     }, 3000);
         loadData();
   
-    
-    
-
+    //on cache le sender
+    document.querySelector(".indice-sender-container").style.display = "none";
 }
 
 //la gestion du chiffre de l'indice
@@ -242,12 +254,19 @@ function saveIndice(){
 //la fonction pour sauvegarder le click sur une carte
 function saveClick(position) {
 if (isDisabled.value === true) {
-    console.log('disabled')
         return;
     }
-    console.log('enabled')
+    //SI C'EST LE JOUEUR 1
     if (rolejoueur.value === 'j1') {
         jsonData.value[position].clickedj2 = true;
+
+        //SI LA CARTE CLIQUEE EST NOIRE
+        if(jsonData.value[position].couleurJ2 == 'black'){
+            isVisible.value = true
+            jsonData.value[25].etat = 'perdu'
+        }
+
+        //SI LA CARTE CLIQUEE EST VERTE
         if (jsonData.value[position].couleurJ2 === 'green') {
             if (jsonData.value[position].greenfound === true) {
                 return;
@@ -256,14 +275,34 @@ if (isDisabled.value === true) {
             
         }
 
+        //SI LA CARTE CLIQUEE EST BEIGE
+        if (jsonData.value[position].couleurJ2 === '#f2c667') {
+            jsonData.value[25].jetonsrestants = jsonData.value[25].jetonsrestants - 1;
+            finTour();
+        }
+
+    //SI C'EST LE JOUEUR 2
     } else {
         jsonData.value[position].clickedj1 = true;
+
+        //SI LA CARTE CLIQUEE EST NOIRE
+        if(jsonData.value[position].couleurJ1 == 'black'){
+            isVisible.value = true
+            jsonData.value[25].etat = 'perdu'
+        }
+
+        //SI LA CARTE CLIQUEE EST VERTE
         if (jsonData.value[position].couleurJ1 === 'green') {
             if (jsonData.value[position].greenfound === true) {
                 return;
             }
-            jsonData.value[position].greenfound = true;
-            
+            jsonData.value[position].greenfound = true; 
+        }
+
+        //SI LA CARTE CLIQUEE EST BEIGE
+        if (jsonData.value[position].couleurJ1 === '#f2c667') {
+            jsonData.value[25].jetonsrestants = jsonData.value[25].jetonsrestants - 1;
+            finTour();
         }
     }
     postJson();
@@ -295,6 +334,15 @@ function finTour(){
     
 }
 
+//en cas de defaite, les fonctions du modal pour quitter
+function quitter(){
+    window.location.href = `http://localhost:8000/fr/accueil`;
+}
+
+function retournerProfil(){
+    window.location.href = `http://localhost:8000/fr/accueil`;
+}
+
 //la fonction pour recharger la page
 function reloadData() {
   loadData()
@@ -303,6 +351,9 @@ function reloadData() {
 
 <template>
     <div class="app">
+         <Modal v-model:visible="isVisible" :closable="false" title="CARTE ASSASSIN" :cancelButton="{ text: 'Retourner au profil', onclick: quitter }" :okButton="{ text: 'Quitter', onclick: quitter }">
+            <div>Vous êtes tombé sur un assassin... Pas de chance ! Vous et votre partenaire avez perdu. </div>
+        </Modal>
         <p>{{ updateValue }}</p>
         <div class="app-nav">
             <div class="app-nav-content app-nav-content1">
@@ -310,6 +361,7 @@ function reloadData() {
                 <BoutonMenu :variant=currentPlayer :link=bouton1[2] />
                 <BoutonMenu :variant=adversaire content="Votre équipier :" />
                 <BoutonMenu :variant=agentstrouves content="Agents trouvés sur 15 : " />
+                <BoutonMenu :variant=jetonsrestants content="Jetons restants : " />
             </div>
             <div class="app-nav-content app-nav-content2">
                 <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
