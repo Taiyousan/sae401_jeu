@@ -15,6 +15,11 @@ let isVisible= ref(false);
 let modalTitre = ref()
 let modalTexte = ref()
 
+//indication pour le joueur
+let indication = ref('')
+
+//indice envoyé ou non :
+let indiceenvoye = ref(false)
 
 //j1 ou j2, récupéré dans l'url :
 const rolejoueur = ref('')
@@ -96,8 +101,11 @@ async function loadData() {
         clickedArray.value.splice(index, 1, element.clicked)
       });
 
+
+      
       //je récupère le current player du json (qui indique de qui c'est le tour) et je le mets dans tourjoueur
       tourjoueur.value = jsonData.value[25].currentPlayer
+
 
         //je récupère le nombre d'agents trouvés
         agentstrouves.value = jsonData.value[25].agentstrouves
@@ -110,17 +118,27 @@ async function loadData() {
             isVisible.value = true
         }
 
-        //je cache ou affiche le formulaire d'inidice
+        //je cache ou affiche le formulaire d'indice
       if (currentPlayer.value == jsonData.value[25].currentPlayer) {
         //j'affiche le formulaire d'indice
         //je rend les cartes impossibles à cliquer
-        document.querySelector(".indice-sender-container").style.display = "flex";
+        if (indiceenvoye == false){
+            document.querySelector(".indice-sender-container").style.display = "flex";
+            //je donne une indication au joueur
+        indication.value = "A vous de donner un indice, " + currentPlayer.value + " !"
+        indication.value = indication.value.toUpperCase()
+        }
         isDisabled.value = true
+        
+
       } else {
         //je cache le formulaire d'indice
         //je rend les cartes cliquables
         document.querySelector(".indice-sender-container").style.display = "none";
         isDisabled.value = false
+        //je donne une indication au joueur
+        indication.value = "Essayez de trouver les mots avec l'indice de votre partenaire, " + currentPlayer.value + " !"
+        indication.value = indication.value.toUpperCase()
       }
 
       //j'indique le nombre de cartes vertes trouvées
@@ -229,6 +247,9 @@ function indiceSave(){
   
     //on cache le sender
     document.querySelector(".indice-sender-container").style.display = "none";
+    indiceenvoye = true;
+    indication.value = "Votre partenaire essaye de trouver les mots avec votre indice."
+    indication.value = indication.value.toUpperCase()
 }
 
 //la gestion du chiffre de l'indice
@@ -290,12 +311,16 @@ if (isDisabled.value === true) {
                 return;
             }
             jsonData.value[position].greenfound = true;
+            indication.value = 'Vous avez trouvé une carte verte ! Vous pouvez continuer votre tour.'
+            indication.value = indication.value.toUpperCase();
             
         }
 
         //SI LA CARTE CLIQUEE EST BEIGE
         if (jsonData.value[position].couleurJ2 === '#f2c667') {
             jsonData.value[25].jetonsrestants = jsonData.value[25].jetonsrestants - 1;
+            indication.value = 'Oups ! Vous avez trouvé une carte beige ! Vous perdez un jeton.'
+            indication.value = indication.value.toUpperCase();
             finTour();
         }
 
@@ -315,11 +340,15 @@ if (isDisabled.value === true) {
                 return;
             }
             jsonData.value[position].greenfound = true; 
+            indication.value = 'Vous avez trouvé une carte verte ! Vous pouvez continuer votre tour.'
+            indication.value = indication.value.toUpperCase();
         }
 
         //SI LA CARTE CLIQUEE EST BEIGE
         if (jsonData.value[position].couleurJ1 === '#f2c667') {
             jsonData.value[25].jetonsrestants = jsonData.value[25].jetonsrestants - 1;
+            indication.value = 'Oups ! Vous avez trouvé une carte beige ! Vous perdez un jeton.'
+            indication.value = indication.value.toUpperCase();
             finTour();
         }
     }
@@ -329,6 +358,8 @@ if (isDisabled.value === true) {
 
 //la fonction pour terminer son tour
 function finTour(){
+    indiceenvoye = false;
+    console.log('envoyé ? : ' + indiceenvoye)
     if(tourjoueur.value === jsonData.value[25].j1){
         tourjoueur.value = jsonData.value[25].j2
         jsonData.value[25].currentPlayer = jsonData.value[25].j2
@@ -375,14 +406,10 @@ function reloadData() {
         <p>{{ updateValue }}</p>
         <div class="app-nav">
             <div class="app-nav-content app-nav-content1">
-                <BoutonMenu content="C'est le tour de : " :variant=tourjoueur />
-                <BoutonMenu :variant=currentPlayer :link=bouton1[2] />
-                <BoutonMenu :variant=adversaire content="Votre équipier :" />
-                <BoutonMenu :variant=agentstrouves content="Agents trouvés sur 15 : " />
-                <BoutonMenu :variant=jetonsrestants content="Jetons restants : " />
-            </div>
-            <div class="app-nav-content app-nav-content2">
-                <BoutonMenu :content=boutonRegles[0] :link=boutonRegles[2] />
+                <!-- <BoutonMenu content="C'est le tour de " :variant=tourjoueur /> -->
+                <BoutonMenu :variant=adversaire content="Votre équipier" />
+                <BoutonMenu :variant=agentstrouves variant2="/15" content="Agents trouvés" />
+                <BoutonMenu :variant=jetonsrestants content="Jetons restants " />
                 <BoutonMenu content="Terminer mon tour" v-on:click="finTour()" />
             </div>
         </div>
@@ -393,7 +420,7 @@ function reloadData() {
         </div>
         <div class="joueur-container">
             <div class="joueur-content-left">
-
+                <p class="joueur-content-left-texte">{{indication}}</p>
             </div>
             <div class="joueur-content-center">
                 <div class="plateau">
@@ -652,6 +679,9 @@ a {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    width: 20%;
+}
+
+.app-nav-content1 {
+    width: 100%;
 }
 </style>

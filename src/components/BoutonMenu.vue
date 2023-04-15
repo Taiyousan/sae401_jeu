@@ -1,13 +1,13 @@
 <script setup>
 
-const props = defineProps(['content','variant', 'link'])
+const props = defineProps(['content','variant', 'link', 'variant2'])
 
 
 
 </script>
 
 <template>
-   <button class="button-6" role="button">{{ props.content }}{{ props.variant }}</button>
+   <button class="button-6" role="button">{{ props.content }} <br> <div class="variant">{{ props.variant }}{{ props.variant2 }}</div></button>
 </template>
 
 <style scoped>
@@ -21,10 +21,11 @@ const props = defineProps(['content','variant', 'link'])
   color: rgba(0, 0, 0, 0.85);
   cursor: pointer;
   display: inline-flex;
+  flex-direction: column;
   font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 16px;
+  font-size: 12px;
   font-weight: 600;
-  justify-content: center;
+  justify-content: space-between;
   line-height: 1.25;
   margin: 0;
   min-height: 3rem;
@@ -36,7 +37,8 @@ const props = defineProps(['content','variant', 'link'])
   -webkit-user-select: none;
   touch-action: manipulation;
   vertical-align: baseline;
-  width: auto;
+  width: 150px;
+  height: 70px;
   text-transform: uppercase;
 }
 
@@ -57,6 +59,10 @@ const props = defineProps(['content','variant', 'link'])
   box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
   color: rgba(0, 0, 0, 0.65);
   transform: translateY(0);
+}
+
+.variant {
+  color: red;
 }
 </style>
 

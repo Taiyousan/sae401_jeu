@@ -6,12 +6,7 @@
 - gérer stats partie (partie finie, etc)
     - ajouter dans symfony liste des parties gagnées/perdues
     - ajouter une fonction dans symfony pour retirer de la liste des parties à rejoidre celles qui sont perdues
-- faire un affichage qui permet de rappeler où en est la partie
 
-
-
-# changement de tour
-- cacher form pour joueur qui devine
 
 # traduction
 - wordlist en
