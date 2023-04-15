@@ -7,11 +7,16 @@ import { useRoute } from 'vue-router';
 import { ref } from 'vue';
 import axios from 'axios';
 
+//j1 ou j2, récupéré dans l'url :
 const rolejoueur = ref('')
+
 const adversaire = ref('')
 const tourjoueur = ref('')
 const updateValue = ref('')
 const agentstrouves = ref(0)
+
+//une variable qui sert à savoir si les cartes sont cliquables
+const isDisabled = ref(false)
 onMounted(() => {
   const encodedString = window.location.pathname.split('/').pop()
   rolejoueur.value = atob(encodedString)
@@ -19,9 +24,9 @@ onMounted(() => {
 
 
 //trucs axios
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080'; // Remplacez l'URL par l'URL de votre application Vue.js
-axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
+// axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080';
+// axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+// axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
 
 //Je récupère les données de la partie depuis symfony
 
@@ -44,13 +49,12 @@ console.log(idpartie)
 async function loadData() {
   try {
     // const response = await fetch('http://localhost:8000/json/testsaved.json')
-    const response = await fetch(`http://localhost:8000/api/parties/${idpartie}`)
+    const response = await fetch(`http://127.0.0.1:8000/api/parties/${idpartie}`)
     if (response.ok) {
       jsonData.value = await response.json()
       jsonData.value = jsonData.value.savefile
         console.table(jsonData.value.savefile)
     //   je vérifie qui est le joueur, j1 ou j2
-    console.log(rolejoueur.value)
     if (rolejoueur.value == 'j1') {
         currentPlayer.value = jsonData.value[25].j1
         adversaire.value = jsonData.value[25].j2
@@ -72,12 +76,30 @@ async function loadData() {
       //je récupère le current player du json (qui indique de qui c'est le tour) et je le mets dans tourjoueur
       tourjoueur.value = jsonData.value[25].currentPlayer
 
-      //je récupère le nombre d'agents trouvés
-        // jsonData.value.forEach((element, index) => {
-        //     if (element.greenfound == true) {
-        //         agentstrouves.value = agentstrouves.value + 1
-        //     }
-        // });
+        //je récupère le nombre d'agents trouvés
+        agentstrouves.value = jsonData.value[25].agentstrouves
+
+        //je cache ou affiche le formulaire d'inidice
+      if (currentPlayer.value == jsonData.value[25].currentPlayer) {
+        //j'affiche le formulaire d'indice
+        //je rend les cartes impossibles à cliquer
+        document.querySelector(".indice-sender-container").style.display = "flex";
+        isDisabled.value = true
+      } else {
+        //je cache le formulaire d'indice
+        //je rend les cartes cliquables
+        document.querySelector(".indice-sender-container").style.display = "none";
+        isDisabled.value = false
+      }
+
+      //j'indique le nombre de cartes vertes trouvées
+      let i = 0;
+        jsonData.value.forEach((element, index) => {
+        if (element.greenfound == true) {
+            i++;
+        }
+        });
+        agentstrouves.value = i;
         
     } else {
       throw new Error('Network response was not ok')
@@ -85,12 +107,13 @@ async function loadData() {
   } catch (error) {
     console.log(error)
   }
+
 }
 
 
 onMounted(async () => {
   await loadData()
-  setInterval(loadData, 2000)
+  setInterval(loadData, 3000)
 })
 
 
@@ -132,24 +155,6 @@ const boutonReset = [
 
 //la gestion de l'output de l'indice
 onMounted(() => { 
-    // const input = document.querySelector(".indice-input");
-    // const output = document.querySelector(".indice-output-zone");
-    // const button = document.querySelector(".indice-button");
-    // const outputChiffre = document.querySelector(".indice-output-chiffre");
-    // const inputChiffre = document.querySelector(".indice-input-chiffre");
-    // // envoi du mot si je clique sur le bouton
-    // button.addEventListener("click", (event) => {
-    // output.innerHTML = input.value;
-    // outputChiffre.innerHTML = inputChiffre.value;
-    // input.value = '';
-    // inputChiffre.value = '';
-    // });
-    // // envoi du mot si je clique sur la touche entrée
-    // input.addEventListener("keyup", (event) => {
-    // if (event.keyCode === 13) {
-    //     event.preventDefault();
-    //     button.click();
-    // }});
 });
 //----------------------------------
 
@@ -198,7 +203,6 @@ function indiceSave(){
 
 //la gestion du chiffre de l'indice
 function chiffreIndice(n) {
-    console.log(n);
     const output = document.querySelector(".indice-input-chiffre");
     output.value = n;
 }
@@ -207,9 +211,8 @@ function chiffreIndice(n) {
 // Envoyer une requête POST pour mettre à jour le fichier JSON
 function postJson() {
     //on lance la requete
-    console.log('lancement de la fonction postJson')
-    axios.put(`http://localhost:8000/api/parties/${idpartie}`, { 
-  ...jsonData.value,
+    axios.put(`http://127.0.0.1:8000/api/parties/${idpartie}`, { 
+  ...jsonData,
   savefile: jsonData.value 
 }, {
   headers: {
@@ -220,7 +223,6 @@ function postJson() {
   .catch(error => console.log(error));
 
 
-    console.log('fin de la fonction postJson')
 
    
 }
@@ -239,16 +241,29 @@ function saveIndice(){
 
 //la fonction pour sauvegarder le click sur une carte
 function saveClick(position) {
+if (isDisabled.value === true) {
+    console.log('disabled')
+        return;
+    }
+    console.log('enabled')
     if (rolejoueur.value === 'j1') {
         jsonData.value[position].clickedj2 = true;
         if (jsonData.value[position].couleurJ2 === 'green') {
+            if (jsonData.value[position].greenfound === true) {
+                return;
+            }
             jsonData.value[position].greenfound = true;
+            
         }
 
     } else {
         jsonData.value[position].clickedj1 = true;
         if (jsonData.value[position].couleurJ1 === 'green') {
+            if (jsonData.value[position].greenfound === true) {
+                return;
+            }
             jsonData.value[position].greenfound = true;
+            
         }
     }
     postJson();
@@ -261,19 +276,19 @@ function finTour(){
         tourjoueur.value = jsonData.value[25].j2
         jsonData.value[25].currentPlayer = jsonData.value[25].j2
         postJson();
-            setTimeout(() => {
-            //redirection pour test
-            window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajI=`;
-        }, 1000);
+        //     setTimeout(() => {
+        //     //redirection pour test
+        //     window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajI=`;
+        // }, 1000);
     }
     else{
         tourjoueur.value = jsonData.value[25].j1
         jsonData.value[25].currentPlayer = jsonData.value[25].j1
         postJson();
-            setTimeout(() => {
-            //redirection pour test
-            window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajE=`;
-        }, 1000);
+        //     setTimeout(() => {
+        //     //redirection pour test
+        //     window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajE=`;
+        // }, 1000);
     }
     
 
@@ -313,11 +328,11 @@ function reloadData() {
             <div class="joueur-content-center">
                 <div class="plateau">
                     <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j1'">
-                       <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj2 :greenfound=word.greenfound />
+                       <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj2 :greenfound=word.greenfound :desactive="isDisabled"/>
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
                     <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j2'">
-                       <CardGame :mot=word.mot :couleur=word.couleurJ2 :opponentCouleur=word.couleurJ1 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj1 :greenfound=word.greenfound />
+                       <CardGame :mot=word.mot :couleur=word.couleurJ2 :opponentCouleur=word.couleurJ1 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj1 :greenfound=word.greenfound :desactive="isDisabled"/>
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
                 </div>

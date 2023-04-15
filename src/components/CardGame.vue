@@ -2,18 +2,21 @@
 import { watch } from 'vue';
 
 export default {
-    props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur', 'clicked', 'greenfound'],
+    props: ['couleur','mot', 'position', 'joueur', 'opponentCouleur', 'clicked', 'greenfound', 'desactive'],
     name : 'CardGame',
     methods: {
         affichageCouleur() {
             if (this.clicked == true) {
             this.$el.style.backgroundColor = this.opponentCouleur;
+            console.log('banane')
+            
         }
             if (this.greenfound == true) {
+                console.log(this.mot)
                 this.$el.style.backgroundImage = "url('/src/assets/img/wp3.png')" ;
             }
         },
-        clicked(e){
+        clickedHandle(e){
             const clickedCard = e.target
             if(this.clicked == true){
                 console.log("Vous avez déjà cliqué sur cette carte")
@@ -45,14 +48,19 @@ export default {
     },
     watch: {
     clicked: {
-      handler() {
-        this.affichageCouleur();
-      },
-      deep: true
+        handler() {
+            this.affichageCouleur();
+        },
+        deep: true
+    },
+    greenfound: {
+        handler() {
+            this.affichageCouleur();
+        },
+        deep: true
     }
-  }
-
-  }
+}
+}
 
 
 
@@ -62,7 +70,7 @@ export default {
 </script>
 
 <template>
-    <div class="card" v-on:click="clicked($event)" v-on:load="slideIn($event)"  >
+    <div class="card" v-on:click="(!desactive && !greenfound) && clickedHandle($event)" v-on:load="slideIn($event)"  >
         <div class="card-mot-container" v-on:click.stop>
             <div class="card-mot" v-on:click.stop>
                 <p v-on:click.stop>{{this.mot.toUpperCase()}}</p>
