@@ -38,7 +38,7 @@ const props = defineProps(['content','variant', 'link', 'variant2'])
   touch-action: manipulation;
   vertical-align: baseline;
   width: 150px;
-  height: 70px;
+  height: 60px;
   text-transform: uppercase;
 }
 

@@ -7,13 +7,18 @@ export default {
     methods: {
         affichageCouleur() {
             if (this.clicked == true) {
-            this.$el.style.backgroundColor = this.opponentCouleur;
-            console.log('banane')
+            if (this.opponentCouleur == "#f2c667") {
+                this.$el.style.backgroundImage = "url('/src/assets/img/cards_beige_token.png')" ;
+                this.$el.style.backgroundSize = "cover";
+            }else if(this.opponentCouleur == "black"){
+                this.$el.style.backgroundImage = "url('/src/assets/img/cards_black_cut.png')" ;
+                this.$el.style.color = "white";
+            }
             
         }
             if (this.greenfound == true) {
                 console.log(this.mot)
-                this.$el.style.backgroundImage = "url('/src/assets/img/wp3.png')" ;
+                this.$el.style.backgroundImage = "url('/src/assets/img/cards_green_cut.png')" ;
             }
         },
         clickedHandle(e){
@@ -27,6 +32,7 @@ export default {
             }
             if (this.opponentCouleur == "green") {
                 clickedCard.style.backgroundColor = "green";
+                clickedCard.style.backgroundImage = "url('/src/assets/img/cards_green_cut.png')" ;
              
             } if(this.opponentCouleur == "#f2c667") {
              clickedCard.style.backgroundColor = "#f2c667";
@@ -79,8 +85,8 @@ export default {
 
 <style scoped>
 .card {
-    width: 80%;
-    height: 60%;
+    width: 95px;
+    height: 46px;
     display: flex;
     justify-content: center;
     align-items: end;
@@ -89,7 +95,8 @@ export default {
     cursor: pointer;
     transition: 0.2s;
     background-size: cover;
-    background-color: #f9e4b7;
+    /* background-color: #f9e4b7; */
+    background-image: url('/src/assets/img/cards_beige_cut.png');
     /* background-color: v-bind($props.couleur); */
     /* border: 1px solid red; */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
@@ -98,17 +105,12 @@ export default {
 }
 
 .card-mot-container {
-    height: 30%;
-    width: 80%;
-    background-color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 5px;
+   position: absolute;
+   bottom: 17%;
 }
 
 .card-mot-container p {
-    font-size: 16px;
+    font-size: 10px;
     margin: 5px;
     font-weight: bold;
     text-align: center;

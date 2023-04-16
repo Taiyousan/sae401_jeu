@@ -21,8 +21,8 @@ export default {
 
 <style scoped>
 .case {
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     transition: 0.2s;
     transform: translateX(500px);
     background-color: v-bind($props.couleur);
