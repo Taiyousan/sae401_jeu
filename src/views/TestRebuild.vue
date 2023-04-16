@@ -2,7 +2,7 @@
 import CardGame from '../components/CardGame.vue';
 import CardGrille from '../components/CardGrille.vue';
 import BoutonMenu from '../components/BoutonMenu.vue';
-import { onMounted, VueElement } from 'vue';
+import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ref } from 'vue';
 import axios from 'axios';
@@ -37,33 +37,22 @@ onMounted(() => {
   rolejoueur.value = atob(encodedString)
 })
 
-
-//trucs axios
-// axios.defaults.headers.common['Access-Control-Allow-Origin'] = 'http://localhost:8080';
-// axios.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
-// axios.defaults.headers.common['Access-Control-Allow-Headers'] = 'Content-Type, Authorization';
-
 //Je récupère les données de la partie depuis symfony
-
-let jsonData = ref([]);
-let currentPlayer = ref([]);
-let joueur2 = ref([]);
-let dernierIndice = ref([]);
+let jsonData = ref([]); // Sert à stocker les données du JSON
+let currentPlayer = ref([]); // Sert à stocker le nom du joueur qui joue
+let joueur2 = ref([]); // Sert à stocker le nom du joueur 2
+let dernierIndice = ref([]); // Sert à stocker le dernier indice envoyé
 let isVariableSet = false; // Sert à savoir si la variable a été affectée. Une fois qu'elle a été affectée, on ne la réaffecte plus.
 let clickedArray = ref([]);
-
-
-
 
 //infos de la route
 const route = useRoute()
 const idpartie = route.params.id
 console.log(idpartie)
 
-
+//fonction de chargement des données
 async function loadData() {
   try {
-    // const response = await fetch('http://localhost:8000/json/testsaved.json')
     const response = await fetch(`http://127.0.0.1:8000/api/parties/${idpartie}`)
     if (response.ok) {
       jsonData.value = await response.json()
@@ -123,7 +112,7 @@ async function loadData() {
         //j'affiche le formulaire d'indice
         //je rend les cartes impossibles à cliquer
         if (indiceenvoye == false){
-            document.querySelector(".indice-sender-container").style.display = "flex";
+            document.querySelector(".indice-sender-container").style.visibility = "visible";
             //je donne une indication au joueur
         indication.value = "A vous de donner un indice, " + currentPlayer.value + " !"
         indication.value = indication.value.toUpperCase()
@@ -134,7 +123,7 @@ async function loadData() {
       } else {
         //je cache le formulaire d'indice
         //je rend les cartes cliquables
-        document.querySelector(".indice-sender-container").style.display = "none";
+        document.querySelector(".indice-sender-container").style.visibility = "hidden";
         isDisabled.value = false
         //je donne une indication au joueur
         indication.value = "Essayez de trouver les mots avec l'indice de votre partenaire, " + currentPlayer.value + " !"
@@ -165,15 +154,7 @@ onMounted(async () => {
   setInterval(loadData, 3000)
 })
 
-
-  
-
-  
-  
-    //lire le fichier JSON dans la console en tableau
-    //???????????????????
-
-//le bouton pour exporter le fichier JSON
+//le bouton pour exporter le fichier JSON (test file)
 function exportToJsonFile(jsonData) {
     let dataStr = JSON.stringify(jsonData);
     let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
@@ -186,27 +167,6 @@ function exportToJsonFile(jsonData) {
     linkElement.click();
 }
 
-//les infos des boutons
-const bouton1 = [
-    'Joueurs : ',
-    '2',
-    'lien'
-]
-const boutonRegles = [
-    'Règles',
-    'lien'
-]
-const boutonReset = [
-    'Réinitialiser',
-    'lien'
-]
-//--------------------
-
-//la gestion de l'output de l'indice
-onMounted(() => { 
-});
-//----------------------------------
-
 //indice + sauvagarde
 function indiceSave(){
     //constantes
@@ -218,8 +178,6 @@ function indiceSave(){
     //sauvegarde
     jsonData.value[25].dernierIndice[0] = inputMot.value
     jsonData.value[25].dernierIndice[1] = inputChiffre.value
-
-   
 
     //affichage
     outputMot.innerHTML = inputMot.value;
@@ -246,7 +204,7 @@ function indiceSave(){
         loadData();
   
     //on cache le sender
-    document.querySelector(".indice-sender-container").style.display = "none";
+    document.querySelector(".indice-sender-container").style.visibility = "hidden";
     indiceenvoye = true;
     indication.value = "Votre partenaire essaye de trouver les mots avec votre indice."
     indication.value = indication.value.toUpperCase()
@@ -276,18 +234,6 @@ function postJson() {
 
 
    
-}
-
-//la fonction pour sauvegarder le dernier indice
-function saveIndice(){
-    // const output = document.querySelector(".indice-output-zone");
-    // const outputChiffre = document.querySelector(".indice-output-chiffre");
-    // jsonData.value[25].dernierIndice[0] = output.innerHTML
-    // console.log(output.innerHTML)
-    // jsonData.value[25].dernierIndice[1] = outputChiffre.innerHTML
-    // // console.log(jsonData.value[25].dernierIndice)
-    // console.log('bg')
-    // postJson();
 }
 
 //la fonction pour sauvegarder le click sur une carte
@@ -372,19 +318,11 @@ function finTour(){
         tourjoueur.value = jsonData.value[25].j2
         jsonData.value[25].currentPlayer = jsonData.value[25].j2
         postJson();
-        //     setTimeout(() => {
-        //     //redirection pour test
-        //     window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajI=`;
-        // }, 1000);
     }
     else{
         tourjoueur.value = jsonData.value[25].j1
         jsonData.value[25].currentPlayer = jsonData.value[25].j1
         postJson();
-        //     setTimeout(() => {
-        //     //redirection pour test
-        //     window.location.href = `http://127.0.0.1:5173/testrebuild/${idpartie}/ajE=`;
-        // }, 1000);
     }
     
 
@@ -408,7 +346,7 @@ function reloadData() {
 
 <template>
     <div class="app">
-         <Modal v-model:visible="isVisible" :closable="false" :title=modalTitre :cancelButton="{ text: 'Retourner au profil', onclick: quitter }" :okButton="{ text: 'Quitter', onclick: quitter }">
+         <Modal v-model:visible="isVisible" :closable="false" :title=modalTitre :cancelButton="{ text: 'Retourner à l\'accueil', onclick: quitter }" :okButton="{ text: 'Quitter', onclick: quitter }">
             <div>{{ modalTexte }} </div>
         </Modal>
         <p>{{ updateValue }}</p>
@@ -422,9 +360,11 @@ function reloadData() {
             </div>
         </div>
         <div class="indice-output">
-            <span class="indice-indice">Indice :  </span>
-            <span class="indice-output-zone">{{ dernierIndice[0] }}</span>
-            <span class="indice-output-chiffre">{{ dernierIndice[1] }}</span>
+            <div class="indice-output-wrapper">
+                <span class="indice-indice">Indice :  </span>
+                <span class="indice-output-zone">{{ dernierIndice[0] }}</span>
+                <span class="indice-output-chiffre">{{ dernierIndice[1] }}</span>
+            </div>
         </div>
         <div class="joueur-container">
             <div class="joueur-content-left">
@@ -486,7 +426,7 @@ a {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 15vh;
+    height: 20vh;
     width: 100%;
     /* background-color: aliceblue; */
 }
@@ -545,10 +485,25 @@ a {
     height: 5vh;
     width: 100%;
     margin-top: 25px;
-    /* background-color: red; */
     /* border: 1px solid red; */
     font-size: 20px;
-    color: black;
+    color: white;
+    text-transform: uppercase;
+}
+
+.indice-output-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 5vh;
+    width: fit-content;
+    padding: 10px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    background-color: rgba(4, 0, 0, 0.177);
+    font-size: 20px;
+    color: white;
     text-transform: uppercase;
 }
 
@@ -647,7 +602,7 @@ a {
     align-items: center;
     /* background-color: rgb(211, 237, 237); */
     /* border: 1px solid black; */
-    height: 65vh;
+    height: 60vh;
 }
 
 .joueur-content-left {
@@ -665,6 +620,7 @@ a {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     padding: 10px;
     border-radius: 10px;
+    background-color: rgb(255, 255, 255);
 
 }
 
@@ -674,7 +630,6 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* border: 1px solid black; */
 
 }
 

@@ -1,12 +1,8 @@
 <script setup>
-import { Suspense } from 'vue';
-import Jeu from './views/Jeu.vue';
-// import Router from './router/index.js';
 
 
 
 </script>
-oui
 <template>
       <div class="app">
         <!-- <nav>
@@ -30,7 +26,7 @@ oui
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  /* background-image:url('assets/img/wp4.jpg'); */
+ 
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
