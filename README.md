@@ -1,16 +1,10 @@
 # CODE NAMES DUO
 
 # Reste à faire
-- régler problème de changement de taille au build 
 - revoir affichage de l'indice
 
 
 # SYMFONY :
-
-
-
-- ACCUEIL
-    * Adapter avec le css
 
 - MISE EN LIGNE
     * vérifier domaine
