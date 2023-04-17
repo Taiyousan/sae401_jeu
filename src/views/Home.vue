@@ -181,7 +181,7 @@ onMounted(async () => {
 
 onMounted(() => {
   const monbody = document.querySelector("body")
-  monbody.style.backgroundColor = "red"
+  monbody.style.backgroundColor = "rgb(37, 150, 190)"
 })
 
 //le bouton pour exporter le fichier JSON (test file)
