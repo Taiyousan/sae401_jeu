@@ -44,6 +44,8 @@ let joueur2 = ref([]); // Sert à stocker le nom du joueur 2
 let dernierIndice = ref([]); // Sert à stocker le dernier indice envoyé
 let isVariableSet = false; // Sert à savoir si la variable a été affectée. Une fois qu'elle a été affectée, on ne la réaffecte plus.
 let clickedArray = ref([]);
+let rolejoueur = ref('')
+let idpartie = ref('')
 
 //infos de la route
 // const route = useRoute()
@@ -66,8 +68,9 @@ let clickedArray = ref([]);
 async function loadData() {
   try {
     const params = new URLSearchParams(window.location.search);
-    const idpartie = params.get("param1");
-    const rolejoueur = params.get("param2");
+    idpartie = params.get("param1");
+    rolejoueur = params.get("param2");
+
 
     // const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
     const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
