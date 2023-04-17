@@ -88,12 +88,14 @@ console.log(rolejoueur)
             modalTitre.value = "A COURT DE TEMPS"
             modalTexte.value = "Vous n'avez plus de jetons, vous avez perdu ! Vous et votre partenaire avez échoué."
             victoire.value = "defaite"
+            postJson()
             isVisible.value = true
             // Si elle est perdue parce qu'on a trouvé l'assassin :
         } else if (jsonData.value[25].etat == "perdu") {
             modalTitre.value = "ASSASSIN !"
             modalTexte.value = "Vous avez trouvé l'assassin, vous avez perdu ! Vous et votre partenaire avez échoué."
             victoire.value = "defaite"
+            postJson()
             isVisible.value = true
         }
 
