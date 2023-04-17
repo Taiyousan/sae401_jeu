@@ -8,17 +8,17 @@ export default {
         affichageCouleur() {
             if (this.clicked == true) {
             if (this.opponentCouleur == "#f2c667") {
-                this.$el.style.backgroundImage = "url('/assets/cards_beige_token.png')" ;
+                this.$el.style.backgroundImage = "url('/jeu/assets/cards_beige_token.png')" ;
                 this.$el.style.backgroundSize = "cover";
             }else if(this.opponentCouleur == "black"){
-                this.$el.style.backgroundImage = "url('/assets/cards_black_cut.png')" ;
+                this.$el.style.backgroundImage = "url('/jeu/assets/cards_black_cut.png')" ;
                 this.$el.style.color = "white";
             }
             
         }
             if (this.greenfound == true) {
                 console.log(this.mot)
-                this.$el.style.backgroundImage = "url('/assets/cards_green_cut.png')" ;
+                this.$el.style.backgroundImage = "url('/jeu/assets/cards_green_cut.png')" ;
             }
         },
         clickedHandle(e){
@@ -32,7 +32,7 @@ export default {
             }
             if (this.opponentCouleur == "green") {
                 clickedCard.style.backgroundColor = "green";
-                clickedCard.style.backgroundImage = "url('/assets/cards_green_cut.png')" ;
+                clickedCard.style.backgroundImage = "url('/jeu/assets/cards_green_cut.png')" ;
              
             } if(this.opponentCouleur == "#f2c667") {
              clickedCard.style.backgroundColor = "#f2c667";
