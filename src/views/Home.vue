@@ -128,7 +128,7 @@ console.log(rolejoueur)
 
         //je récupère le nombre d'agents trouvés
         agentstrouves.value = jsonData.value[25].agentstrouves
-        if(agentstrouves.value == 15){
+        if(jsonData.value[25].agentstrouves == 15){
             jsonData.value[25].etat = "victoire"
             victoire.value = "victoire"
             modalTitre.value = "VICTOIRE !"
