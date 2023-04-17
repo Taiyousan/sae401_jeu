@@ -179,6 +179,8 @@ console.log(rolejoueur)
         }
         });
         agentstrouves.value = i;
+        jsonData.value[25].agentstrouves = i;
+        postJson();
         
     } else {
       throw new Error('Network response was not ok')
