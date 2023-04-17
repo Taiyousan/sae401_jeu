@@ -395,11 +395,11 @@ function reloadData() {
             </div>
             <div class="joueur-content-center">
                 <div class="plateau">
-                    <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j1'">
+                    <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j2'">
                        <CardGame :mot=word.mot :couleur=word.couleurJ1 :opponentCouleur=word.couleurJ2 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj2 :greenfound=word.greenfound :desactive="isDisabled"/>
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
-                    <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j2'">
+                    <template v-for="(word, index) in jsonData.slice(0,25)" v-if="rolejoueur === 'j1'">
                        <CardGame :mot=word.mot :couleur=word.couleurJ2 :opponentCouleur=word.couleurJ1 :position=word.position :joueur=1  v-on:click="saveClick(word.position)" :clicked=word.clickedj1 :greenfound=word.greenfound :desactive="isDisabled"/>
                        <!-- // Je passe les props 'mot' et 'couleur' à mon composant CardGame avec une couleur spécifique au joueur 1 -->
                     </template>
