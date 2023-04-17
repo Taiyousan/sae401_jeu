@@ -46,7 +46,7 @@ let isVariableSet = false; // Sert à savoir si la variable a été affectée. U
 let clickedArray = ref([]);
 
 //infos de la route
-const route = useRoute()
+// const route = useRoute()
 // const idpartie = route.params.id
 console.log(idpartie)
 
@@ -59,14 +59,15 @@ url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
 
 console.log(params["param1"]);
 console.log(params["param2"]);
-const idpartie = params["param1"];
-const rolejoueur = params["param2"]
+
 
 
 
 //fonction de chargement des données
 async function loadData() {
   try {
+    const idpartie = params["param1"];
+    const rolejoueur = params["param2"]
     const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
     if (response.ok) {
       jsonData.value = await response.json()
