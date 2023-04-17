@@ -269,10 +269,10 @@ if (isDisabled.value === true) {
     }
     //SI C'EST LE JOUEUR 1
     if (rolejoueur === 'j1') {
-        if (jsonData.value[position].clickedj2 === true) {
+        if (jsonData.value[position].clickedj1 === true) {
             return;
         }else{
-        jsonData.value[position].clickedj2 = true;
+        jsonData.value[position].clickedj1 = true;
 
         //SI LA CARTE CLIQUEE EST NOIRE
         if(jsonData.value[position].couleurJ2 == 'black'){
@@ -302,10 +302,10 @@ if (isDisabled.value === true) {
 
     //SI C'EST LE JOUEUR 2
     } else {
-        if (jsonData.value[position].clickedj1 === true) {
+        if (jsonData.value[position].clickedj2 === true) {
             return;
         }else{
-        jsonData.value[position].clickedj1 = true;
+        jsonData.value[position].clickedj2 = true;
 
         //SI LA CARTE CLIQUEE EST NOIRE
         if(jsonData.value[position].couleurJ1 == 'black'){
