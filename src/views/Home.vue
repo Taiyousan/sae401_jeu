@@ -11,6 +11,9 @@ import { Modal } from 'usemodal-vue3';
 //visibilité du modal :
 let isVisible= ref(false);
 
+let rolejoueur = ref('')
+let idpartie = ref('')
+
 //infos du modal
 let modalTitre = ref()
 let modalTexte = ref()
@@ -34,7 +37,7 @@ const jetonsrestants = ref(0)
 const isDisabled = ref(false)
 // onMounted(() => {
 //   const encodedString = window.location.pathname.split('/').pop()
-//   rolejoueur.value = atob(encodedString)
+//   rolejoueur = atob(encodedString)
 // })
 
 //Je récupère les données de la partie depuis symfony
@@ -44,8 +47,7 @@ let joueur2 = ref([]); // Sert à stocker le nom du joueur 2
 let dernierIndice = ref([]); // Sert à stocker le dernier indice envoyé
 let isVariableSet = false; // Sert à savoir si la variable a été affectée. Une fois qu'elle a été affectée, on ne la réaffecte plus.
 let clickedArray = ref([]);
-let rolejoueur = ref('')
-let idpartie = ref('')
+
 
 //infos de la route
 // const route = useRoute()
@@ -93,10 +95,12 @@ console.log(rolejoueur)
         }
 
     //   je vérifie qui est le joueur, j1 ou j2
-    if (rolejoueur.value == 'j1') {
+    if (rolejoueur == 'j1') {
         currentPlayer.value = jsonData.value[25].j1
         adversaire.value = jsonData.value[25].j2
-      } if (rolejoueur.value == 'j2') {
+        console.log('oui' + currentPlayer.value)
+        console.log(adversaire.value)
+      } if (rolejoueur == 'j2') {
         currentPlayer.value = jsonData.value[25].j2
         adversaire.value = jsonData.value[25].j1
       }
@@ -264,7 +268,7 @@ if (isDisabled.value === true) {
         return;
     }
     //SI C'EST LE JOUEUR 1
-    if (rolejoueur.value === 'j1') {
+    if (rolejoueur === 'j1') {
         if (jsonData.value[position].clickedj2 === true) {
             return;
         }else{
