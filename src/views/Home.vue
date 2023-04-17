@@ -179,6 +179,11 @@ onMounted(async () => {
   setInterval(loadData, 3000)
 })
 
+onMounted(() => {
+  const monbody = document.querySelector("body")
+  monbody.style.backgroundColor = "red"
+})
+
 //le bouton pour exporter le fichier JSON (test file)
 function exportToJsonFile(jsonData) {
     let dataStr = JSON.stringify(jsonData);
