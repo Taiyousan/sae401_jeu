@@ -32,6 +32,7 @@ const tourjoueur = ref('')
 const updateValue = ref('')
 const agentstrouves = ref(0)
 const jetonsrestants = ref(0)
+const victoire = ref('')
 
 //une variable qui sert à savoir si les cartes sont cliquables
 const isDisabled = ref(false)
@@ -86,11 +87,13 @@ console.log(rolejoueur)
         if (jsonData.value[25].etat == "perdu" && jsonData.value[25].jetonsrestants == 0) {
             modalTitre.value = "A COURT DE TEMPS"
             modalTexte.value = "Vous n'avez plus de jetons, vous avez perdu ! Vous et votre partenaire avez échoué."
+            victoire.value = "defaite"
             isVisible.value = true
             // Si elle est perdue parce qu'on a trouvé l'assassin :
         } else if (jsonData.value[25].etat == "perdu") {
             modalTitre.value = "ASSASSIN !"
             modalTexte.value = "Vous avez trouvé l'assassin, vous avez perdu ! Vous et votre partenaire avez échoué."
+            victoire.value = "defaite"
             isVisible.value = true
         }
 
@@ -253,7 +256,8 @@ function postJson() {
     // axios.put(`http://127.0.0.1:8000/api/parties/${idpartie}`, { 
     axios.put(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`, { 
   ...jsonData,
-  savefile: jsonData.value 
+  savefile: jsonData.value, 
+  victoire: victoire.value
 }, {
   headers: {
     'Content-Type': 'application/json'
