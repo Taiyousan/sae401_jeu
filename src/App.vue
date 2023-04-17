@@ -1,10 +1,7 @@
 <script setup>
 
-
-console.log('Heldbhhbjdhbjkd')
 </script>
 <template>
-    
       <router-view></router-view>
 </template>
 
@@ -23,10 +20,6 @@ console.log('Heldbhhbjdhbjkd')
   margin: 0;
   padding: 0;
   background-image: url('/jeu/assets/spy_background.png');
-
 }
 
-body {
-  background-image: url('/jeu/assets/spy_background.png');
-}
 </style>
