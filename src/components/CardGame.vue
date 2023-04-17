@@ -27,7 +27,7 @@ export default {
                 console.log("Vous avez déjà cliqué sur cette carte")
             }else{
                 if(this.opponentCouleur == "black"){
-                clickedCard.style.backgroundColor = "black";
+                clickedCard.style.backgroundImage = "url('/jeu/assets/cards_black_cut.png')" ;
                 
             }
             if (this.opponentCouleur == "green") {
@@ -35,7 +35,7 @@ export default {
                 clickedCard.style.backgroundImage = "url('/jeu/assets/cards_green_cut.png')" ;
              
             } if(this.opponentCouleur == "#f2c667") {
-             clickedCard.style.backgroundColor = "#f2c667";
+             clickedCard.style.backgroundImage = "url('/jeu/assets/beige_token.png')" ;
             }
             this.$el.style.transform = 'translateY(-10px)'
             setTimeout(() => {
