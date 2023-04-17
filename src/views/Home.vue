@@ -131,9 +131,9 @@ console.log(rolejoueur)
         if(agentstrouves.value == 15){
             jsonData.value[25].etat = "victoire"
             victoire.value = "victoire"
-            postJson();
             modalTitre.value = "VICTOIRE !"
             modalTexte.value = "Vous avez trouvé les 15 agents, vous avez gagné ! Vous et votre partenaire avez réussi votre mission. !"
+            postJson();
             isVisible.value = true
 
         }
