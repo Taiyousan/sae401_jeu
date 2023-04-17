@@ -51,14 +51,14 @@ let clickedArray = ref([]);
 console.log(idpartie)
 
 //infos url
-const url = window.location.href;
-var params = {};
-url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
-  params[key] = value;
-});
+// const url = window.location.href;
+// var params = {};
+// url.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+//   params[key] = value;
+// });
 
-console.log(params["param1"]);
-console.log(params["param2"]);
+// console.log(params["param1"]);
+// console.log(params["param2"]);
 
 
 
@@ -66,8 +66,11 @@ console.log(params["param2"]);
 //fonction de chargement des données
 async function loadData() {
   try {
-    const idpartie = params["param1"];
-    const rolejoueur = params["param2"]
+    const params = new URLSearchParams(window.location.search);
+    const idpartie = params.get("param1");
+    const rolejoueur = params.get("param2");
+
+    // const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
     const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
     if (response.ok) {
       jsonData.value = await response.json()
