@@ -53,7 +53,7 @@ console.log(idpartie)
 //fonction de chargement des données
 async function loadData() {
   try {
-    const response = await fetch(`http://127.0.0.1:8000/api/parties/${idpartie}`)
+    const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
     if (response.ok) {
       jsonData.value = await response.json()
       jsonData.value = jsonData.value.savefile
@@ -220,7 +220,8 @@ function chiffreIndice(n) {
 // Envoyer une requête POST pour mettre à jour le fichier JSON
 function postJson() {
     //on lance la requete
-    axios.put(`http://127.0.0.1:8000/api/parties/${idpartie}`, { 
+    // axios.put(`http://127.0.0.1:8000/api/parties/${idpartie}`, { 
+    axios.put(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`, { 
   ...jsonData,
   savefile: jsonData.value 
 }, {
@@ -331,11 +332,12 @@ function finTour(){
 
 //en cas de defaite, les fonctions du modal pour quitter
 function quitter(){
-    window.location.href = `http://localhost:8000/fr/accueil`;
+    // window.location.href = `http://localhost:8000/fr/accueil`;
+    window.location.href = `http://mmi21g01.sae401.ovh/fr/accueil`;
 }
 
 function retournerProfil(){
-    window.location.href = `http://localhost:8000/fr/accueil`;
+    window.location.href = `http://mmi21g01.sae401.ovh/fr/accueil`;
 }
 
 //la fonction pour recharger la page
