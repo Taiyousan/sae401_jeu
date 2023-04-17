@@ -128,11 +128,21 @@ console.log(rolejoueur)
 
         //je récupère le nombre d'agents trouvés
         agentstrouves.value = jsonData.value[25].agentstrouves
+        if(agentstrouves.value == 15){
+            jsonData.value[25].etat = "victoire"
+            victoire.value = "victoire"
+            postJson();
+            modalTitre.value = "VICTOIRE !"
+            modalTexte.value = "Vous avez trouvé les 15 agents, vous avez gagné ! Vous et votre partenaire avez réussi votre mission. !"
+            isVisible.value = true
+
+        }
 
         //je récupère le nombre de jetons restants
         jetonsrestants.value = jsonData.value[25].jetonsrestants
         if(jetonsrestants.value == 0){
             jsonData.value[25].etat = "perdu"
+            victoire.value = "defaite"
             postJson();
             isVisible.value = true
         }
