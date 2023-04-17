@@ -23,4 +23,8 @@ console.log('Heldbhhbjdhbjkd')
   margin: 0;
   padding: 0;
 }
+
+body {
+  background-image: url('/jeu/assets/spy_background.png');
+}
 </style>

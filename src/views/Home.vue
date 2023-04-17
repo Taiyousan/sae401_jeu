@@ -441,9 +441,6 @@ function reloadData() {
 
 <style scoped>
 
-body {
-   background-image: url("/jeu/assets/spy_background.png");
-}
 
 a {
     text-decoration: none;
