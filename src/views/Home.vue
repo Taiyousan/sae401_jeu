@@ -60,17 +60,18 @@ let idpartie = ref('')
 
 // console.log(params["param1"]);
 // console.log(params["param2"]);
-
+const params = new URLSearchParams(window.location.search);
+    idpartie = params.get("param1");
+    rolejoueur = params.get("param2");
 
 
 
 //fonction de chargement des données
 async function loadData() {
   try {
-    const params = new URLSearchParams(window.location.search);
-    idpartie = params.get("param1");
-    rolejoueur = params.get("param2");
-
+    
+console.log(idpartie)
+console.log(rolejoueur)
 
     // const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
     const response = await fetch(`http://mmi21g01.sae401.ovh/api/parties/${idpartie}`)
