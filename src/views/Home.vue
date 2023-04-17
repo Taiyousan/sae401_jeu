@@ -48,7 +48,6 @@ let clickedArray = ref([]);
 //infos de la route
 // const route = useRoute()
 // const idpartie = route.params.id
-console.log(idpartie)
 
 //infos url
 // const url = window.location.href;
