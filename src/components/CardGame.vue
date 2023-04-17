@@ -8,7 +8,7 @@ export default {
         affichageCouleur() {
             if (this.clicked == true) {
             if (this.opponentCouleur == "#f2c667") {
-                this.$el.style.backgroundImage = "url('/jeu/assets/cards_beige_token.png')" ;
+                this.$el.style.backgroundImage = "url('/jeu/assets/beige_token.png')" ;
                 this.$el.style.backgroundSize = "cover";
             }else if(this.opponentCouleur == "black"){
                 this.$el.style.backgroundImage = "url('/jeu/assets/cards_black_cut.png')" ;
